@@ -1,2 +1,5 @@
-# Projet_Tutore_10-2_Lecteur_Double_PDF
-Repository Git contenant le projet tutoré pour l'année 2021-2022 portant sur le sujet du lecteur double PDF
+# Lecteur_Double_PDF
+
+Année : 2021-2022
+
+Repository Git contenant le projet tutoré pour l'année 2021-2022 portant sur le sujet d'un lecteur double PDF
