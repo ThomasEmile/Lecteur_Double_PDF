@@ -5,6 +5,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static gestionPDF.createPagePDF.nombrePage;
+import static gestionPDF.createPagePDF.tailleEspace;
+
+/**
+ *
+ */
 public class configComposants {
 
     /**
@@ -16,42 +22,40 @@ public class configComposants {
         frame.setSize(1920, 1080);
         frame.setResizable(true);
         frame.setVisible(true);
+        frame.setBackground(new Color(77,74,73));
     }
 
     /**
      * methode qui configure les JPanel entré en argument
      * @param panel1
      * @param background
-     * @param buttonForAllPage
-     * @param header
+     * @param button
      */
-    public static void configJPanel(JPanel panel1, JPanel background, JPanel buttonForAllPage, JPanel header) {
+    public static void configJPanel(JPanel panel1, JPanel background, JPanel button) {
 
         panel1.setLayout(new BoxLayout(panel1, BoxLayout.Y_AXIS));
         background.setLayout(new BoxLayout(background, BoxLayout.Y_AXIS));
-        buttonForAllPage.setBackground(Color.getHSBColor(1, 1, 30));
-        header.setBackground(Color.getHSBColor(1, 1, 30));
+        button.setBackground(new Color(184, 184, 184));
+        button.setBackground(new Color(184, 184, 184));
     }
 
     /**
      * méthode qui ajoute les différents composants afin de les afficher sur un JFrame
      * @param panel1
-     * @param Header
+     * @param button
      * @param panelCont1
-     * @param buttonForPage
      * @param containerPDF
      * @param background
      * @param frame
      * @param scrollPaneFrame
      */
-    public static void ajoutComposantsDouble(JPanel panel1, JPanel Header,JPanel panelCont1, JPanel buttonForPage,
-                                             JPanel containerPDF, JPanel background, JFrame frame, JScrollPane scrollPaneFrame) {
+    public static void ajoutComposantsDouble(JPanel panel1, JPanel button,JPanel panelCont1, JPanel containerPDF,
+                                             JPanel background, JFrame frame, JScrollPane scrollPaneFrame) {
         panelCont1.add(panel1);
 
-        buttonForPage.add(Header);
         containerPDF.add(panelCont1);
 
-        background.add(buttonForPage);
+        background.add(button);
         background.add(containerPDF);
 
         frame.add(scrollPaneFrame);
@@ -72,10 +76,7 @@ public class configComposants {
      * méthode qui configure l'action des différents JButton entrés en argument
      * @param pageSuivante
      * @param pagePrecedente
-     * @param fenetreDouble
-     * @param DoublePage
      * @param choixPage
-     * @param headerPDF2
      * @param panel1
      * @param c
      * @param height
@@ -83,30 +84,44 @@ public class configComposants {
     public static void configJButton(JButton pageSuivante, JButton pagePrecedente, JTextField choixPage, JPanel panel1,
                                      Counter c, int height)  {
 
+        pageSuivante.setPreferredSize(new Dimension(50,50));
+        pagePrecedente.setPreferredSize(new Dimension(50,50));
+
+        choixPage.setBackground(new Color(225, 222, 222));
+        choixPage.setText("1");
+
         // évènement page suivante
         pageSuivante.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                c.decrease();
-                int y = (height+17) * c.getValue();
-                panel1.setLocation(0, y);
+                if (c.getValue() != nombrePage-1) {
+                    c.increment();
+                    int y = (height+tailleEspace) * -(c.getValue());
+                    panel1.setLocation(0, y);
+                    choixPage.setText(String.valueOf(1+c.getValue()));
+                }
             }
         });
 
         // évènement page precedente
         pagePrecedente.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                c.increment();
-                int y = (height+17) * c.getValue();
-                panel1.setLocation(0, y);
+                if (c.getValue() != 0) {
+                    c.decrease();
+                    int y = (height+tailleEspace) * -(c.getValue());
+                    panel1.setLocation(0, y);
+                    choixPage.setText(String.valueOf(1+c.getValue()));
+                }
             }
         });
 
         // évènement affiche la page entrée par l'utilisateur
         choixPage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                int y = (height+17) * -(Integer.parseInt(choixPage.getText())-1);
-                panel1.setLocation(0, y);
-                c.setValue(Integer.parseInt(choixPage.getText())-1);
+                if (Integer.parseInt(choixPage.getText()) <= nombrePage && Integer.parseInt(choixPage.getText()) > 0) {
+                    int y = (height+tailleEspace) * -(Integer.parseInt(choixPage.getText())-1);
+                    panel1.setLocation(0, y);
+                    c.setValue(Integer.parseInt(choixPage.getText())-1);
+                }
             }
         });
 
@@ -119,22 +134,27 @@ public class configComposants {
 
 
         void increment() {
+
             value++;
         }
 
         void decrease() {
+
             value--;
         }
 
         void reset() {
+
             value = 0;
         }
 
         public int getValue() {
+
             return value;
         }
 
         public void setValue(int value) {
+
             this.value = value;
         }
 
