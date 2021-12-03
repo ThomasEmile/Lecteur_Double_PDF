@@ -17,7 +17,8 @@ public class pdfDoubleAffichage extends JPanel {
     public static void main(String[] args) throws Exception {
 
         String nomJFrame = "pdfDoubleAffichage";
-        String chemin = "C:/Cours/Réseau/1ère année/cours_p1.pdf";
+        String cheminPDF = "C:/Cours/Réseau/1ère année/cours_p1.pdf";
+        String cheminIconApp = "icon/IconApp.png";
 
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 
@@ -25,7 +26,7 @@ public class pdfDoubleAffichage extends JPanel {
         JFrame frame = new JFrame(nomJFrame);
 
         // configuration du JFrame
-        configJFrameDouble(frame);
+        configJFrameDouble(frame, cheminIconApp);
 
         // panel background
         JPanel background = new JPanel();
@@ -68,18 +69,18 @@ public class pdfDoubleAffichage extends JPanel {
         configJPanel(panel1, background, button);
 
         // création du premier document PDF
-        createPdf(panel1, pdf, chemin);
+        createPdf(panel1, pdf, cheminPDF);
+
+        //création d'un Label pour le nombre de pages restantes
+        JLabel nombreOfPage = new JLabel("| " + String.valueOf(nombrePage));
+        button.add(nombreOfPage);
 
         ajoutComposantsDouble(panel1, button, panelCont1, containerPDF, background, frame, scrollPaneFrame);
 
         // déclaration de deux objets Counter
         Counter c = new Counter();
 
-        configJButton(pageSuivante, pagePrecedente, choixPage, panel1, c, height);
-
-        //création d'un Label pour le nombre de pages restantes
-        JLabel NombrePage = new JLabel(String.valueOf(nombrePage));
-        button.add(NombrePage);
+        configJButton(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1, c, height);
 
 
     }

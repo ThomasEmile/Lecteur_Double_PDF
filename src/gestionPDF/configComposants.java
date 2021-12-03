@@ -17,12 +17,14 @@ public class configComposants {
      * methode qui configure le JFrame entré en argument
      * @param frame
      */
-    public static void configJFrameDouble(JFrame frame) {
+    public static void configJFrameDouble(JFrame frame, String cheminIconApp) {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1920, 1080);
         frame.setResizable(true);
         frame.setVisible(true);
         frame.setBackground(new Color(77,74,73));
+        ImageIcon iconApp = new ImageIcon(cheminIconApp);
+        frame.setIconImage(iconApp.getImage());
     }
 
     /**
@@ -81,11 +83,21 @@ public class configComposants {
      * @param c
      * @param height
      */
-    public static void configJButton(JButton pageSuivante, JButton pagePrecedente, JTextField choixPage, JPanel panel1,
-                                     Counter c, int height)  {
+    public static void configJButton(JButton pageSuivante, JButton pagePrecedente, JTextField choixPage, JLabel nombreOfPage,
+                                     JPanel panel1, Counter c, int height)  {
 
         pageSuivante.setPreferredSize(new Dimension(50,50));
         pagePrecedente.setPreferredSize(new Dimension(50,50));
+        choixPage.setPreferredSize(new Dimension(50,30));
+
+        pageSuivante.setFont(new Font("Serif", Font.BOLD, 20));
+        pagePrecedente.setFont(new Font("Serif", Font.BOLD, 20));
+        choixPage.setFont(new Font("Arial", Font.PLAIN, 20));
+        nombreOfPage.setFont(new Font("Arial", Font.PLAIN, 20));
+
+        pagePrecedente.setContentAreaFilled(false);
+        pageSuivante.setContentAreaFilled(false);
+
 
         choixPage.setBackground(new Color(225, 222, 222));
         choixPage.setText("1");
