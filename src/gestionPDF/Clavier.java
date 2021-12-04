@@ -66,6 +66,7 @@ public class Clavier implements KeyListener, MouseWheelListener {
                 panel.requestFocus();
                 if (c.getValue() != nombrePage-1) {
                     c.increment();
+                    nbScroll.setValue(c.getValue()*6);
                     y = (height+tailleEspace) * (c.getValue());
                     scrollPaneFrame.getVerticalScrollBar().setValue(y);
                     choixPage.setText(String.valueOf(1+c.getValue()));
@@ -75,6 +76,7 @@ public class Clavier implements KeyListener, MouseWheelListener {
                 panel.requestFocus();
                 if (c.getValue() != 0) {
                     c.decrease();
+                    nbScroll.setValue(c.getValue()*6);
                      y = (height+tailleEspace) * (c.getValue());
                     scrollPaneFrame.getVerticalScrollBar().setValue(y);
                     choixPage.setText(String.valueOf(1+c.getValue()));

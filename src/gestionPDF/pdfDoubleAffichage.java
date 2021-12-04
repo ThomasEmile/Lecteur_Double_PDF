@@ -26,23 +26,28 @@ public class pdfDoubleAffichage extends JPanel {
         //Création de JFrame.
         JFrame frame = new JFrame(nomJFrame);
 
+        //frame.setFocusable(false);
         // configuration du JFrame
         configJFrameDouble(frame, cheminIconApp);
 
         // panel background
         JPanel background = new JPanel();
         background.setFocusable(false);
+        background.setFocusable(false);
 
         //panel contenant le pdf
         JPanel containerPDF = new JPanel();
+        containerPDF.setFocusable(false);
         containerPDF.setFocusable(false);
 
         // panel contenant le panel pdf
         JPanel panelCont1 = new JPanel();
         panelCont1.setFocusable(false);
+        panelCont1.setFocusable(false);
 
         // panel pdf 1
         JPanel panel1 = new JPanel();
+        panel1.setFocusable(false);
         panel1.setLayout(new GridLayout(0, 1));
 
         // panel boutons
