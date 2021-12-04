@@ -44,7 +44,7 @@ public class createPagePDF {
                     JLabel containerPagePDF = new JLabel("");
                     fichierPDF.add(containerPagePDF);
                     containerPagePDF.setFocusable(false);
-
+                    nomPanel.add(fichierPDF.get(page));
 
                     BufferedImage img = pdfRenderer.renderImageWithDPI(page, 100);
                     ImageIcon icon = new ImageIcon(img);
@@ -59,8 +59,9 @@ public class createPagePDF {
                     icon = new ImageIcon(newimg);
                     fichierPDF.get(page).setIcon(icon);
                     nomPanel.setFocusable(false);
+                    espace.setFocusable(false);
                     espace.setBackground(new Color(239, 237, 237));
-                    nomPanel.add(fichierPDF.get(page));
+
                     if (page != document.getNumberOfPages()-1) {
                         nomPanel.add(espace);
                     }

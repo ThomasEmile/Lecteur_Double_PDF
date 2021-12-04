@@ -89,26 +89,28 @@ public class pdfDoubleAffichage extends JPanel {
         // déclaration de deux objets Counter
         Counter c = new Counter();
         NbScroll nbScroll = new NbScroll();
+        Tab tab = new Tab();
+
 
         frame.addKeyListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1,
-                            c, height,frame,scrollPaneFrame, nbScroll));
+                            c, height,frame,scrollPaneFrame, nbScroll, tab));
         frame.addMouseWheelListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1,
-                                     c, height,frame,scrollPaneFrame, nbScroll));
+                                     c, height,frame,scrollPaneFrame, nbScroll, tab));
         pagePrecedente.addKeyListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1,
-                                        c, height,frame,scrollPaneFrame, nbScroll));
+                                        c, height,frame,scrollPaneFrame, nbScroll, tab));
 
         pageSuivante.addKeyListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1,
-                                    c, height,frame,scrollPaneFrame,nbScroll));
+                                    c, height,frame,scrollPaneFrame,nbScroll, tab));
 
         choixPage.addKeyListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1,
-                                   c, height,frame,scrollPaneFrame, nbScroll));
+                                   c, height,frame,scrollPaneFrame, nbScroll, tab));
 
         scrollPaneFrame.addMouseWheelListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1,
-                                               c, height,frame,scrollPaneFrame, nbScroll));
+                                               c, height,frame,scrollPaneFrame, nbScroll, tab));
         panel1.addMouseWheelListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1,
-                                         c, height,frame,scrollPaneFrame, nbScroll));
+                                         c, height,frame,scrollPaneFrame, nbScroll, tab));
         background.addMouseWheelListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1,
-                                            c, height,frame,scrollPaneFrame, nbScroll));
+                                            c, height,frame,scrollPaneFrame, nbScroll, tab));
 
 
         configJButton(pageSuivante, pagePrecedente, choixPage, nombreOfPage, scrollPaneFrame, c, height, containerPDF);

@@ -21,9 +21,11 @@ public class Clavier implements KeyListener, MouseWheelListener {
     configComposants.Counter c;
     int height;
     configComposants.NbScroll nbScroll;
+    configComposants.Tab tab;
 
     public Clavier (JButton pageSuivante, JButton pagePrecedente, JTextField choixPage, JLabel nombreOfPage,
-                    JPanel panel1, configComposants.Counter c, int height, JFrame frame, JScrollPane scrollPaneFrame, configComposants.NbScroll nbScroll) {
+                    JPanel panel1, configComposants.Counter c, int height, JFrame frame, JScrollPane scrollPaneFrame,
+                    configComposants.NbScroll nbScroll, configComposants.Tab tab) {
         this.pagePrecedente = pagePrecedente;
         this.pageSuivante = pageSuivante;
         this.gestionTab = 0;
@@ -35,6 +37,7 @@ public class Clavier implements KeyListener, MouseWheelListener {
         this.height = height;
         this.scrollPaneFrame = scrollPaneFrame;
         this.nbScroll = nbScroll;
+        this.tab = tab;
 
     }
 
@@ -66,7 +69,7 @@ public class Clavier implements KeyListener, MouseWheelListener {
                 panel.requestFocus();
                 if (c.getValue() != nombrePage-1) {
                     c.increment();
-                    nbScroll.setValue(c.getValue()*6);
+                    nbScroll.setValue(c.getValue()*10);
                     y = (height+tailleEspace) * (c.getValue());
                     scrollPaneFrame.getVerticalScrollBar().setValue(y);
                     choixPage.setText(String.valueOf(1+c.getValue()));
@@ -76,7 +79,7 @@ public class Clavier implements KeyListener, MouseWheelListener {
                 panel.requestFocus();
                 if (c.getValue() != 0) {
                     c.decrease();
-                    nbScroll.setValue(c.getValue()*6);
+                    nbScroll.setValue(c.getValue()*10);
                      y = (height+tailleEspace) * (c.getValue());
                     scrollPaneFrame.getVerticalScrollBar().setValue(y);
                     choixPage.setText(String.valueOf(1+c.getValue()));
@@ -88,16 +91,20 @@ public class Clavier implements KeyListener, MouseWheelListener {
             case (KeyEvent.VK_UP) :
                 monter();
                 break;
-            case (KeyEvent.VK_E):
-
-                gestionTab++;
-                if (gestionTab == 1) {
-                    pageSuivante.requestFocus();
+            case (KeyEvent.VK_A):
+                if (tab.getValue() > 3) {
+                    tab.decrease();
+                } else {
+                    tab.increment();
                 }
-                if (pageSuivante.isFocusOwner()) {
-                    pagePrecedente.requestFocus();
+                switch (tab.getValue()) {
+                    case 1 : pageSuivante.requestFocus();
+                    break;
+                    case 2 : pagePrecedente.requestFocus();
+                    break;
+                    case 3 : choixPage.requestFocus();
+                    break;
                 }
-                break;
           }
         }
 
@@ -117,28 +124,32 @@ public class Clavier implements KeyListener, MouseWheelListener {
     public void mouseWheelMoved(MouseWheelEvent e) {
         int notches = e.getWheelRotation();
         if (notches < 0) {
+            System.out.println(notches);
             monter();
         } else {
+            System.out.println(notches);
             descendre();
         }
     }
 
     private void descendre() {
-        if (nbScroll.getValue() < nombrePage*6) nbScroll.increment();
-        int y = (height+tailleEspace) * (nbScroll.getValue()) / 6;
-        scrollPaneFrame.getVerticalScrollBar().setValue(y);
-        if (c.getValue() != nombrePage-1 && nbScroll.getValue() % 6 == 0) {
-            c.setValue(nbScroll.getValue()/6);
+        int y = scrollPaneFrame.getVerticalScrollBar().getValue();
+        scrollPaneFrame.getVerticalScrollBar().setValue(y+50);
+
+        if (c.getValue() != nombrePage-1) {
+            c.setValue(scrollPaneFrame.getVerticalScrollBar().getValue()/height);
+
             choixPage.setText(String.valueOf(1 + c.getValue()));
         }
     }
 
     private void monter() {
-        if (nbScroll.getValue() > 0) nbScroll.decrease();
-        int y = (height+tailleEspace) * (nbScroll.getValue()) / 6;
-        scrollPaneFrame.getVerticalScrollBar().setValue(y);
-        if (c.getValue() != 0 && nbScroll.getValue()%6 == 0) {
-            c.setValue(nbScroll.getValue()/6);
+
+
+        int y = scrollPaneFrame.getVerticalScrollBar().getValue();
+        scrollPaneFrame.getVerticalScrollBar().setValue(y-50);
+        if (c.getValue() != 0) {
+            c.setValue(scrollPaneFrame.getVerticalScrollBar().getValue()/height);
 
             choixPage.setText(String.valueOf(1 + c.getValue()));
         }
