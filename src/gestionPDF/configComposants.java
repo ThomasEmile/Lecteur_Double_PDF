@@ -172,5 +172,40 @@ public class configComposants {
 
     }
 
+    static class NbScroll {
+        int value;
+
+        public NbScroll () {
+            value = 0;
+        }
+
+        void increment() {
+
+            value++;
+        }
+
+        void decrease() {
+
+            value--;
+        }
+
+        void reset() {
+
+            value = 0;
+        }
+
+        public int getValue() {
+
+            return value;
+        }
+
+        public void setValue(int value) {
+
+            this.value = value;
+        }
+
+
+    }
+
 }
 
