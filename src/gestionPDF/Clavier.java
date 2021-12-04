@@ -15,11 +15,13 @@ public class Clavier implements KeyListener {
     private JTextField choixPage;
     private JLabel nombreOfPage;
     private JPanel panel;
+    private JScrollPane scrollPaneFrame;
     configComposants.Counter c;
     int height;
+    int nbScroll;
 
     public Clavier (JButton pageSuivante, JButton pagePrecedente, JTextField choixPage, JLabel nombreOfPage,
-                    JPanel panel1, configComposants.Counter c, int height, JFrame frame) {
+                    JPanel panel1, configComposants.Counter c, int height, JFrame frame, JScrollPane scrollPaneFrame) {
         this.pagePrecedente = pagePrecedente;
         this.pageSuivante = pageSuivante;
         this.gestionTab = 0;
@@ -29,6 +31,8 @@ public class Clavier implements KeyListener {
         panel = panel1;
         this.c = c;
         this.height = height;
+        this.scrollPaneFrame = scrollPaneFrame;
+        this.nbScroll = 0;
 
     }
 
@@ -53,24 +57,44 @@ public class Clavier implements KeyListener {
      */
     @Override
     public void keyPressed(KeyEvent e) {
+        int y;
         int code = e.getKeyCode();
         switch (code) {
             case (KeyEvent.VK_RIGHT):
                 panel.requestFocus();
-                if (c.getValue() != nombrePage - 1) {
+                if (c.getValue() != nombrePage-1) {
                     c.increment();
-                    int y = (height + tailleEspace) * -(c.getValue());
-                    panel.setLocation(0, y);
-                    choixPage.setText(String.valueOf(1 + c.getValue()));
+                     y = (height+tailleEspace) * (c.getValue());
+                    scrollPaneFrame.getVerticalScrollBar().setValue(y);
+                    choixPage.setText(String.valueOf(1+c.getValue()));
                 }
                 break;
             case (KeyEvent.VK_LEFT):
-                // todo essayer de garder le focus sur la frame pour pouvoir scroll et changer de page avec les fleches
                 panel.requestFocus();
                 if (c.getValue() != 0) {
                     c.decrease();
-                    int y = (height + tailleEspace) * -(c.getValue());
-                    panel.setLocation(0, y);
+                     y = (height+tailleEspace) * (c.getValue());
+                    scrollPaneFrame.getVerticalScrollBar().setValue(y);
+                    choixPage.setText(String.valueOf(1+c.getValue()));
+                }
+                break;
+            case (KeyEvent.VK_DOWN) :
+                if (nbScroll < nombrePage*6) nbScroll++;
+                 y = (height+tailleEspace) * (nbScroll) / 6;
+                scrollPaneFrame.getVerticalScrollBar().setValue(y);
+                if (c.getValue() != nombrePage-1 && nbScroll % 6 == 0) {
+                    System.out.println(c.getValue());
+                    c.setValue(nbScroll / 6);
+                    choixPage.setText(String.valueOf(1 + c.getValue()));
+                }
+                break;
+            case (KeyEvent.VK_UP) :
+                if (nbScroll > 0) nbScroll--;
+                 y = (height+tailleEspace) * (nbScroll) / 6;
+                scrollPaneFrame.getVerticalScrollBar().setValue(y);
+                if (c.getValue() != 0 && nbScroll%6 == 0) {  System.out.println(c.getValue());
+                    c.setValue(nbScroll/6);
+
                     choixPage.setText(String.valueOf(1 + c.getValue()));
                 }
                 break;

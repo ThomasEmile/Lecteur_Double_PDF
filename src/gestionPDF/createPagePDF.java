@@ -1,6 +1,5 @@
 package gestionPDF;
 
-import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
@@ -20,7 +19,6 @@ public class createPagePDF {
     public static int height = 0;
     public static int width = 0;
     public static int tailleEspace = 22;
-
     public static int nombrePage = 0;
 
 
@@ -33,7 +31,7 @@ public class createPagePDF {
      */
     static void createPdf(JPanel nomPanel, ArrayList<JLabel> fichierPDF, String chemin) {
 
-        try(PDDocument document = Loader.loadPDF(new File(chemin))) {
+        try(PDDocument document = PDDocument.load(new File(chemin))) {
                 //nombre de page du document
                 nombrePage = document.getNumberOfPages();
 
@@ -41,10 +39,8 @@ public class createPagePDF {
                 PDFRenderer pdfRenderer = new PDFRenderer(document);
                 //implémentation des pages du fichier pdf dans un tableau de label
                 for (int page = 0; page < document.getNumberOfPages(); ++page) {
-                    JTextArea espace = new JTextArea();
-                    espace.setEditable(false);
-                    espace.setFocusable(false);
 
+                    JTextArea espace = new JTextArea();
                     JLabel containerPagePDF = new JLabel("");
                     fichierPDF.add(containerPagePDF);
                     containerPagePDF.setFocusable(false);
@@ -63,8 +59,11 @@ public class createPagePDF {
                     icon = new ImageIcon(newimg);
                     fichierPDF.get(page).setIcon(icon);
                     nomPanel.setFocusable(false);
+                    espace.setBackground(new Color(239, 237, 237));
                     nomPanel.add(fichierPDF.get(page));
-                    nomPanel.add(espace);
+                    if (page != document.getNumberOfPages()-1) {
+                        nomPanel.add(espace);
+                    }
                 }
         } catch (IOException e) {
             System.err.println("Exception while trying to create pdf document - " + e);

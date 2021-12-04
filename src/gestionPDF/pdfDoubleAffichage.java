@@ -17,7 +17,7 @@ public class pdfDoubleAffichage extends JPanel {
     public static void main(String[] args) throws Exception {
 
         String nomJFrame = "gestionPDF.pdfDoubleAffichage";
-        String cheminPDF = "C:/IUT/S2/THL/THLCOURS.pdf";
+        String cheminPDF = "C:/PdfBox/test.pdf";
         String cheminIconApp = "icon/IconApp.png";
 
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
@@ -31,9 +31,11 @@ public class pdfDoubleAffichage extends JPanel {
         // panel background
         JPanel background = new JPanel();
         background.setFocusable(false);
+
         //panel contenant le pdf
         JPanel containerPDF = new JPanel();
         containerPDF.setFocusable(false);
+
         // panel contenant le panel pdf
         JPanel panelCont1 = new JPanel();
         panelCont1.setFocusable(false);
@@ -59,8 +61,10 @@ public class pdfDoubleAffichage extends JPanel {
         //création textField pour rentrer la page souhaitée
         JTextField choixPage = new JTextField(2);
         button.add(choixPage);
+
         //déclaration d'un objet JScrollPane afin de pouvoir scroll dans la fenêtre
-        JScrollPane scrollPaneFrame = new JScrollPane(background);
+        JScrollPane scrollPaneFrame = new JScrollPane(containerPDF);
+
         //configuration du scrollPane de la fenêtre
         configJScrollPane(scrollPaneFrame);
 
@@ -73,17 +77,26 @@ public class pdfDoubleAffichage extends JPanel {
         //création d'un Label pour le nombre de pages restantes
         JLabel nombreOfPage = new JLabel("| " + String.valueOf(nombrePage));
         button.add(nombreOfPage);
+
         ajoutComposantsDouble(panel1, button, panelCont1, containerPDF, background, frame, scrollPaneFrame);
 
         // déclaration de deux objets Counter
         Counter c = new Counter();
 
+        frame.addKeyListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1, c, height,frame,scrollPaneFrame));
+        frame.addMouseWheelListener(new Souris(choixPage, c, height, scrollPaneFrame));
+        pagePrecedente.addKeyListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1, c, height,frame,scrollPaneFrame));
 
-        frame.addKeyListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1, c, height,frame));
-        pagePrecedente.addKeyListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1, c, height,frame));
-        pageSuivante.addKeyListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1, c, height,frame));
-        choixPage.addKeyListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1, c, height,frame));
-        configJButton(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1, c, height);
+        pageSuivante.addKeyListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1, c, height,frame,scrollPaneFrame));
+
+        choixPage.addKeyListener(new Clavier(pageSuivante, pagePrecedente, choixPage, nombreOfPage, panel1, c, height,frame,scrollPaneFrame));
+
+        scrollPaneFrame.addMouseWheelListener(new Souris(choixPage, c, height, scrollPaneFrame));
+        panel1.addMouseWheelListener(new Souris(choixPage, c, height, scrollPaneFrame));
+        background.addMouseWheelListener(new Souris(choixPage, c, height, scrollPaneFrame));
+
+
+        configJButton(pageSuivante, pagePrecedente, choixPage, nombreOfPage, scrollPaneFrame, c, height, containerPDF);
 
 
     }

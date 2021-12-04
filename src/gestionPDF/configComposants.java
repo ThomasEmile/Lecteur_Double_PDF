@@ -58,9 +58,9 @@ public class configComposants {
         containerPDF.add(panelCont1);
 
         background.add(button);
-        background.add(containerPDF);
+        background.add(scrollPaneFrame);
 
-        frame.add(scrollPaneFrame);
+        frame.add(background);
         frame.validate();
     }
 
@@ -79,12 +79,11 @@ public class configComposants {
      * @param pageSuivante
      * @param pagePrecedente
      * @param choixPage
-     * @param panel1
      * @param c
      * @param height
      */
     public static void configJButton(JButton pageSuivante, JButton pagePrecedente, JTextField choixPage, JLabel nombreOfPage,
-                                     JPanel panel1, Counter c, int height)  {
+                                     JScrollPane scrollPaneFrame, Counter c, int height, JPanel countainerPDF)  {
 
         pageSuivante.setPreferredSize(new Dimension(50,50));
         pagePrecedente.setPreferredSize(new Dimension(50,50));
@@ -107,9 +106,9 @@ public class configComposants {
             public void actionPerformed(ActionEvent e) {
                 if (c.getValue() != nombrePage-1) {
                     c.increment();
-                    int y = (height+tailleEspace) * -(c.getValue());
-                    panel1.setLocation(0, y);
-                    choixPage.setText(String.valueOf(1+c.getValue()));
+                    int y = (height+tailleEspace) * (c.getValue());
+                    scrollPaneFrame.getVerticalScrollBar().setValue(y);
+                    choixPage.setText(String.valueOf(1 + c.getValue()));
                 }
             }
         });
@@ -119,8 +118,8 @@ public class configComposants {
             public void actionPerformed(ActionEvent e) {
                 if (c.getValue() != 0) {
                     c.decrease();
-                    int y = (height+tailleEspace) * -(c.getValue());
-                    panel1.setLocation(0, y);
+                    int y = (height+tailleEspace) * (c.getValue());
+                    scrollPaneFrame.getVerticalScrollBar().setValue(y);
                     choixPage.setText(String.valueOf(1+c.getValue()));
                 }
             }
@@ -130,8 +129,8 @@ public class configComposants {
         choixPage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (Integer.parseInt(choixPage.getText()) <= nombrePage && Integer.parseInt(choixPage.getText()) > 0) {
-                    int y = (height+tailleEspace) * -(Integer.parseInt(choixPage.getText())-1);
-                    panel1.setLocation(0, y);
+                    int y = (height+tailleEspace) * (Integer.parseInt(choixPage.getText())-1);
+                    scrollPaneFrame.getVerticalScrollBar().setValue(y);
                     c.setValue(Integer.parseInt(choixPage.getText())-1);
                 }
             }
@@ -145,7 +144,6 @@ public class configComposants {
     static class Counter {
 
         private int value = 0;
-
 
         void increment() {
 
