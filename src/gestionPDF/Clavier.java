@@ -127,7 +127,6 @@ public class Clavier implements KeyListener, MouseWheelListener {
         scrollPaneFrame.getVerticalScrollBar().setValue(y);
         if (c.getValue() != nombrePage-1 && nbScroll.getValue() % 6 == 0) {
             c.setValue(nbScroll.getValue()/6);
-            ;
             choixPage.setText(String.valueOf(1 + c.getValue()));
         }
     }

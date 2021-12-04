@@ -23,7 +23,7 @@ public class pdfDoubleAffichage extends JPanel {
 
         UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 
-        //Création de JFrame
+        //Création de JFrame.
         JFrame frame = new JFrame(nomJFrame);
 
         // configuration du JFrame
