@@ -73,7 +73,6 @@ public class pdfDoubleAffichage extends JPanel {
         //création d'un Label pour le nombre de pages restantes
         JLabel nombreOfPage = new JLabel("| " + String.valueOf(nombrePage));
         button.add(nombreOfPage);
-        button.setVisible(false);
         ajoutComposantsDouble(panel1, button, panelCont1, containerPDF, background, frame, scrollPaneFrame);
 
         // déclaration de deux objets Counter
