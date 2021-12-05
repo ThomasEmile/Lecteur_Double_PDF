@@ -16,10 +16,12 @@ public class FenetreApp {
     private ButtonPanel button;
     private ContainerPDF container;
 
+    public Clavier clavier = new Clavier();
+
     /**
      * coonstruit une fenetre ainsi qu'un panel qui va contenir tout les autres composants de l'application
      */
-    public FenetreApp(Clavier clavier) {
+    public FenetreApp() {
         container = new ContainerPDF();
         background = new JPanel();
         mainWindow = new JFrame();

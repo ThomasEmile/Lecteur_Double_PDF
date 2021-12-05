@@ -52,7 +52,7 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
     public void keyPressed(KeyEvent e) {
 
         int code = e.getKeyCode();
-        if (buttonPanel.nombreDePage.hasFocus()) {
+        if (buttonPanel.choixPage.hasFocus()) {
             switch (code) {
                 case (KeyEvent.VK_ESCAPE):
                     fenetreApp.mainWindow.requestFocus();
@@ -81,6 +81,7 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
                     break;
                 case (KeyEvent.VK_R):
                     buttonPanel.choixPage.requestFocus();
+                    buttonPanel.choixPage.selectAll();
                     break;
                 case (KeyEvent.VK_A) :
                     ArrayList<JLabel> pdf = new ArrayList<JLabel>();

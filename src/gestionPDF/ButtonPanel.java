@@ -9,6 +9,7 @@ public class ButtonPanel {
 
     public int tailleEspace = 22;
     private JPanel containerButton;
+
     private JButton pageSuivante;
     private JButton pagePrecedente;
     public JTextField choixPage;
@@ -30,6 +31,8 @@ public class ButtonPanel {
         nombreDePage = new JLabel("| " + String.valueOf(fenetre.getContainer().getNombrePage()));
         configButton();
         ajoutComposants();
+        addListeners(fenetre.clavier);
+        gestionFocus();
     }
 
 
@@ -97,13 +100,20 @@ public class ButtonPanel {
         fenetre.getMainWindow().validate();
     }
 
+
     public void addListeners(Clavier clavier) {
         clavier.setButtonPanel(this);
-        this.fenetre.mainWindow.addKeyListener(clavier);
         this.nombreDePage.addKeyListener(clavier);
         this.choixPage.addKeyListener(clavier);
         this.pagePrecedente.addKeyListener(clavier);
         this.pageSuivante.addKeyListener(clavier);
+    }
+
+    public void gestionFocus() {
+        nombreDePage.setFocusable(false);
+        pageSuivante.setFocusable(false);
+        pagePrecedente.setFocusable(false);
+        containerButton.setFocusable(false);
     }
 
     static class Counter {

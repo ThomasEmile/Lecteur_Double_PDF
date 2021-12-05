@@ -75,6 +75,7 @@ public class ContainerPDF {
             for (int page = 0; page < document.getNumberOfPages(); ++page) {
 
                 JTextArea espace = new JTextArea();
+                espace.setFocusable(false);
                 JLabel containerPagePDF = new JLabel("");
                 pagePDF.add(containerPagePDF);
                 containerPagePDF.setFocusable(false);
