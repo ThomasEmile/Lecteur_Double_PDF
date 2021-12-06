@@ -9,7 +9,7 @@ public class ButtonPanel {
 
     public int tailleEspace = 22;
     private JPanel containerButton;
-
+    public ContainerPDF containerPDF;
     private JButton pageSuivante;
     private JButton pagePrecedente;
     public JTextField choixPage;
@@ -21,7 +21,9 @@ public class ButtonPanel {
     
     
     public ButtonPanel(FenetreApp fenetre) {
+
         this.fenetre = fenetre;
+        this.containerPDF = fenetre.container;
         containerButton = new JPanel();
         pageSuivante = new JButton("↓");
         pagePrecedente = new JButton("↑");
@@ -55,11 +57,12 @@ public class ButtonPanel {
         // évènement page suivante
         pageSuivante.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (c.getValue() != fenetre.getContainer().getNombrePage()-1) {
+                if (c.getValue() != containerPDF.nombrePage - 1) {
                     c.increment();
-                    int y = (fenetre.getContainer().height+tailleEspace) * (c.getValue());
-                    fenetre.getContainer().getScrollPaneContainer().getVerticalScrollBar().setValue(y);
-                    choixPage.setText(String.valueOf(1+c.getValue()));
+                    int taillePage = containerPDF.panelImage.get(0).getHeight();
+                    int y = (taillePage + 10) * (c.getValue());
+                    containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(y);
+                    choixPage.setText(String.valueOf(1 + c.getValue()));
                 }
             }
         });
@@ -68,11 +71,13 @@ public class ButtonPanel {
         pagePrecedente.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (c.getValue() != 0) {
-                    c.decrease();
-                    int y = (fenetre.getContainer().getHeight()+tailleEspace) * (c.getValue());
-                    fenetre.getContainer().getScrollPaneContainer().getVerticalScrollBar().setValue(y);
-                    choixPage.setText(String.valueOf(1+c.getValue()));
-                }
+                c.decrease();
+                int taillePage = containerPDF.panelImage.get(0).getHeight();
+                int y = (taillePage + 10) * (c.getValue());
+                containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(y);
+                choixPage.setText(String.valueOf(1 + c.getValue()));
+            }
+
             }
         });
 
@@ -80,9 +85,10 @@ public class ButtonPanel {
         choixPage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (Integer.parseInt(choixPage.getText()) <= fenetre.getContainer().getNombrePage() && Integer.parseInt(choixPage.getText()) > 0) {
-                    int y = (fenetre.getContainer().height+tailleEspace) * (Integer.parseInt(choixPage.getText())-1);
-                    fenetre.getContainer().getScrollPaneContainer().getVerticalScrollBar().setValue(y);
                     c.setValue(Integer.parseInt(choixPage.getText())-1);
+                    int taillePage = containerPDF.panelImage.get(0).getHeight();
+                    int y = (taillePage + 10) * (c.getValue());
+                    containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(y);
                 }
             }
         });

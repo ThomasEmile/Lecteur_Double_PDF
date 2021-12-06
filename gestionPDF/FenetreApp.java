@@ -14,7 +14,7 @@ public class FenetreApp {
     public final JFrame mainWindow;
     private final JPanel background;
     private ButtonPanel button;
-    private ContainerPDF container;
+    public ContainerPDF container;
 
     public Clavier clavier = new Clavier();
 
