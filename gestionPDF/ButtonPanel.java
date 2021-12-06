@@ -17,7 +17,7 @@ public class ButtonPanel {
     private FenetreApp fenetre;
 
     // déclaration de deux objets Counter
-    Counter c = new Counter();
+    public Counter c = new Counter();
     
     
     public ButtonPanel(FenetreApp fenetre) {

@@ -96,14 +96,21 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
     public void zoom() {
         if (!zoome) {
             zoome = true;
+            containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(
+                    containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue()
+                           *2);
             for (int a = 0; a < containerPDF.nombrePage; a++) {
+
                containerPDF.panelImage.get(a).setZoom(2);
-                containerPDF.panelImage.get(a).updateUI();
+               containerPDF.panelImage.get(a).updateUI();
                fenetreApp.mainWindow.repaint();
             }
         } else {
             zoome = false;
+            containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(
+                    containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue()/2);
             for (int a = 0; a < containerPDF.nombrePage; a++) {
+
                 containerPDF.panelImage.get(a).setZoom(1);
                 containerPDF.panelImage.get(a).updateUI();
                 fenetreApp.mainWindow.repaint();
@@ -155,7 +162,6 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
             fenetreApp.mainWindow.requestFocus();
         }
         double notches = e.getPreciseWheelRotation();
-        System.out.println(notches);
         if (notches < 0) {
             monter();
         } else {
@@ -208,7 +214,6 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
     @Override
     public void mouseDragged(MouseEvent e) {
         y = containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue();
-        System.out.println(y);
         buttonPanel.c.setValue(containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue()
                 /
                 containerPDF.panelImage.get(0).getHeight());
@@ -235,7 +240,6 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
     @Override
     public void mouseClicked(MouseEvent e) {
         y = containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue();
-        System.out.println(y);
         buttonPanel.c.setValue(containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue()
                 /
                 containerPDF.panelImage.get(0).getHeight());

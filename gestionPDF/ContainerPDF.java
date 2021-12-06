@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class ContainerPDF {
 
-    private final String chemin = "C:/pdfBox/dtest.PDF";
+    private final String chemin = "Z:/CPO Chap6.pdf";
     public int height = 0;
     public int width = 0;
     public int nombrePage = 0;
@@ -89,7 +89,6 @@ public class ContainerPDF {
                 BufferedImage img1 = pdfRenderer.renderImageWithDPI(page, 180);
 
 
-
                 panelImage.add(new PanelImage(img1,img1.getWidth(), img1.getHeight()));
                 panelImage.get(page).setZoom(1);
                 panelImage.get(page).updateUI();
@@ -101,7 +100,6 @@ public class ContainerPDF {
                 JPanel espace = new JPanel();
                 documentPDF.add(espace);
                 espace.setFocusable(false);
-
             }
 
         } catch (
