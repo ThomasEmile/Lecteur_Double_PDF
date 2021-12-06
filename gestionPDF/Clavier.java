@@ -101,7 +101,7 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
                            *2);
             for (int a = 0; a < containerPDF.nombrePage; a++) {
 
-               containerPDF.panelImage.get(a).setZoom(2);
+               containerPDF.panelImage.get(a).setZoom(1);
                containerPDF.panelImage.get(a).updateUI();
                fenetreApp.mainWindow.repaint();
             }
@@ -111,7 +111,7 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
                     containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue()/2);
             for (int a = 0; a < containerPDF.nombrePage; a++) {
 
-                containerPDF.panelImage.get(a).setZoom(1);
+                containerPDF.panelImage.get(a).setZoom(0.5);
                 containerPDF.panelImage.get(a).updateUI();
                 fenetreApp.mainWindow.repaint();
             }

@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 
 public class PanelImage extends JPanel  {
     public Image image;
-    public int zoom;
+    public double zoom;
     int width = 0;
     int height = 0;
     /**
@@ -30,17 +30,18 @@ public class PanelImage extends JPanel  {
 
     }
 
-    public int getZoom() {
+    public double getZoom() {
         return zoom;
     }
-    public void setZoom(int zoom) {
+    public void setZoom(double zoom) {
         if(zoom > 0)
             this.zoom = zoom;
     }
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(width*zoom/2,height*zoom/2);
+
+        return new Dimension((int)(width*zoom),(int)(height*zoom));
     }
 
     /**
@@ -51,7 +52,7 @@ public class PanelImage extends JPanel  {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(image, 0, 0, width*zoom/2, height*zoom/2,this);
+        g.drawImage(image, 0, 0, (int)(width*zoom), (int)(height*zoom),this);
 
     }
 

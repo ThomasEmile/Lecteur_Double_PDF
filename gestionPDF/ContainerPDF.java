@@ -90,7 +90,7 @@ public class ContainerPDF {
 
 
                 panelImage.add(new PanelImage(img1,img1.getWidth(), img1.getHeight()));
-                panelImage.get(page).setZoom(1);
+                panelImage.get(page).setZoom(0.5);
                 panelImage.get(page).updateUI();
 
                 fenetre.repaint();
