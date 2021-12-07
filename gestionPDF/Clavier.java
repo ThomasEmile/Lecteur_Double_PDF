@@ -1,6 +1,8 @@
 package gestionPDF;
 
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
 
@@ -52,21 +54,7 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
     public void keyPressed(KeyEvent e) {
 
         int code = e.getKeyCode();
-        if (buttonPanel.choixPage.hasFocus()) {
-            switch (code) {
-                case (KeyEvent.VK_ESCAPE):
-                    fenetreApp.mainWindow.requestFocus();
-                    break;
-                case (KeyEvent.VK_ENTER):
-                    if (buttonPanel.choixPage.hasFocus()) {
-                        fenetreApp.mainWindow.requestFocus();
-                        y = ((Integer.parseInt(buttonPanel.choixPage.getText())-1)*841);
-                        containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(y);
 
-                    }
-                    break;
-            }
-        } else {
             switch (code) {
                 case (KeyEvent.VK_RIGHT):
                     containerPDF.documentPDF.requestFocus();
@@ -88,55 +76,35 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
                     break;
                 case (KeyEvent.VK_A) :
                     zoom();
+                    System.out.println("A");
 
             }
         }
-    }
+
 
     public void zoom() {
         if (!zoome) {
             zoome = true;
-            containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(
-                    containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue()
-                           *2);
-            for (int a = 0; a < containerPDF.nombrePage; a++) {
-
-               containerPDF.panelImage.get(a).setZoom(1);
-               containerPDF.panelImage.get(a).updateUI();
-               fenetreApp.mainWindow.repaint();
-            }
+            containerPDF.documentPDF.setVisible(false);
+            containerPDF.documentPDF2.setVisible(true);
         } else {
             zoome = false;
-            containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(
-                    containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue()/2);
-            for (int a = 0; a < containerPDF.nombrePage; a++) {
-
-                containerPDF.panelImage.get(a).setZoom(0.5);
-                containerPDF.panelImage.get(a).updateUI();
-                fenetreApp.mainWindow.repaint();
-            }
+            containerPDF.documentPDF.setVisible(true);
+            containerPDF.documentPDF2.setVisible(false);
         }
     }
 
     public void pagePrecedente() {
         if (buttonPanel.c.getValue() != 0) {
             buttonPanel.c.decrease();
-            int taillePage = containerPDF.panelImage.get(0).getHeight();
-            y = (taillePage + 10) * (buttonPanel.c.getValue());
-            containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(y);
-            buttonPanel.choixPage.setText(String.valueOf(1 + buttonPanel.c.getValue()));
+
         }
     }
 
     public void pageSuivante() {
-        if (buttonPanel.c.getValue() != containerPDF.nombrePage - 1) {
-            buttonPanel.c.increment();
-            int taillePage = containerPDF.panelImage.get(0).getHeight();
-            y = (taillePage + 10) * (buttonPanel.c.getValue());
-            containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(y);
-            buttonPanel.choixPage.setText(String.valueOf(1 + buttonPanel.c.getValue()));
+
         }
-    }
+
 
     /**
      * Invoked when a key has been released.
@@ -172,27 +140,11 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
 
 
     private void descendre() {
-        int y = containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue();
-        containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(y+50);
-        if ( buttonPanel.c.getValue() != containerPDF.nombrePage-1) {
-            buttonPanel.c.setValue( containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue()
-                    /
-                    containerPDF.panelImage.get(0).getHeight());
 
-            buttonPanel.choixPage.setText(String.valueOf(1 + buttonPanel.c.getValue()));
-        }
     }
 
     private void monter() {
-        int y = containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue();
-        containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(y-50);
-        if ( buttonPanel.c.getValue() != 0) {
-            buttonPanel.c.setValue( containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue()
-                    /
-                    containerPDF.panelImage.get(0).getHeight());
 
-            buttonPanel.choixPage.setText(String.valueOf(1 + buttonPanel.c.getValue()));
-        }
     }
 
 
@@ -213,11 +165,7 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        y = containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue();
-        buttonPanel.c.setValue(containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue()
-                /
-                containerPDF.panelImage.get(0).getHeight());
-        buttonPanel.choixPage.setText(String.valueOf(1 + buttonPanel.c.getValue()));
+
     }
 
     /**
@@ -239,11 +187,7 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
      */
     @Override
     public void mouseClicked(MouseEvent e) {
-        y = containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue();
-        buttonPanel.c.setValue(containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue()
-                /
-                containerPDF.panelImage.get(0).getHeight());
-        buttonPanel.choixPage.setText(String.valueOf(1 + buttonPanel.c.getValue()));
+
     }
 
     /**

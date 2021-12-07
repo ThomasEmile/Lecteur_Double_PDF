@@ -12,8 +12,8 @@ public class FenetreApp {
     private final String CHEMIN_ICONE_APP = "icon/IconApp.png";
 
     public final JFrame mainWindow;
-    private final JPanel background;
-    private ButtonPanel button;
+    public final JPanel background;
+    public ButtonPanel button;
     public ContainerPDF container;
 
     public Clavier clavier = new Clavier();
@@ -22,15 +22,15 @@ public class FenetreApp {
      * coonstruit une fenetre ainsi qu'un panel qui va contenir tout les autres composants de l'application
      */
     public FenetreApp() {
+
         background = new JPanel();
         mainWindow = new JFrame();
-        container = new ContainerPDF(new JFrame());
         mainWindow.setTitle(WINDOW_NAME);
-        configMainWindow();
-        configBackground();
-        button = new ButtonPanel(this);
+        configBackground();configMainWindow();
+        container = new ContainerPDF(this);
+
         this.addListeners(clavier);
-        container = new ContainerPDF(this.getMainWindow());
+        button = new ButtonPanel(this);
     }
 
     public ButtonPanel getButton() {
@@ -75,6 +75,7 @@ public class FenetreApp {
     }
 
     private void configBackground() {
+
         background.setLayout(new BoxLayout(background, BoxLayout.Y_AXIS));
     }
 

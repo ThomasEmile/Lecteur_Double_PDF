@@ -1,6 +1,5 @@
 package gestionPDF;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -17,8 +16,7 @@ public class PanelImage extends JPanel  {
      */
     public PanelImage(BufferedImage img) {
         this.zoom = 2;
-        this.image = img.getScaledInstance(getPreferredSize().width, getPreferredSize().height, 16);
-
+        this.image = img.getScaledInstance(getPreferredSize().width, getPreferredSize().height, 4);
 
     }
 
@@ -26,8 +24,7 @@ public class PanelImage extends JPanel  {
         this.zoom = 2;
         this.width = width;
         this.height = height;
-        this.image = img.getScaledInstance(getPreferredSize().width, getPreferredSize().height, 16);
-
+        this.image = img.getScaledInstance(getPreferredSize().width, getPreferredSize().height, 4);
     }
 
     public double getZoom() {
@@ -48,12 +45,10 @@ public class PanelImage extends JPanel  {
      * Surcharger le dessin du composant
      * @param g canvas
      */
-
-    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(image, 0, 0, (int)(width*zoom), (int)(height*zoom),this);
-
+        g.drawImage(image, 0, 0, (int) (width * zoom), (int) (height * zoom), null);
+        g.dispose();
     }
 
 }
