@@ -11,22 +11,30 @@ public class FenetreApp {
     private final String WINDOW_NAME = "pdfDoubleAffichage";
     private final String CHEMIN_ICONE_APP = "icon/IconApp.png";
 
-    private final JFrame mainWindow;
+    public final JFrame mainWindow;
     private final JPanel background;
     private ButtonPanel button;
     private ContainerPDF container;
+
+    public Clavier clavier;
+
+    public Clavier getClavier() {
+        return clavier;
+    }
 
     /**
      * coonstruit une fenetre ainsi qu'un panel qui va contenir tout les autres composants de l'application
      */
     public FenetreApp() {
-        container = new ContainerPDF();
+        container = new ContainerPDF(this);
         background = new JPanel();
         mainWindow = new JFrame();
         mainWindow.setTitle(WINDOW_NAME);
         configMainWindow();
         configBackground();
         button = new ButtonPanel(this);
+        clavier = new Clavier(this);
+        this.addListeners(clavier);
     }
 
     public ButtonPanel getButton() {
@@ -56,6 +64,18 @@ public class FenetreApp {
         mainWindow.setBackground(new Color(77, 74, 73));
         ImageIcon iconApp = new ImageIcon(CHEMIN_ICONE_APP);
         mainWindow.setIconImage(iconApp.getImage());
+    }
+
+    public void addListeners(Clavier clavier) {
+
+        clavier.setFenetreApp(this);
+        clavier.setButtonPanel(button);
+        clavier.setContainerPDF(container);
+        this.background.addKeyListener(clavier);
+        this.mainWindow.addKeyListener(clavier);
+        container.getScrollPaneContainer().addMouseWheelListener(clavier);
+        container.getScrollPaneContainer().getVerticalScrollBar().addMouseMotionListener(clavier);
+        container.getScrollPaneContainer().getVerticalScrollBar().addMouseListener(clavier);
     }
 
     private void configBackground() {
