@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class ContainerPDF {
 
-    public String chemin = FileChooser.Chooser();  //= "C:/Users/Eva/scolaire/info2/projetTuteure/Projet_Tutores_-_Exigences_projets_V3.pdf";
+    public String chemin = FileChooser.Chooser(); 
     public int height = 0;
     public int width = 0;
     public int nombrePage = 0;
