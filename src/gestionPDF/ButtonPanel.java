@@ -201,7 +201,10 @@ public class ButtonPanel {
         // évènement qui zoom un pdf
         zoom.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+<<<<<<< HEAD
                 verifZoom = true;
+=======
+>>>>>>> 00885a8cf1a5410491a6b07b2dfc5a92d7d76cb6
                 fenetre.getContainer().setZoomed(true);
                 fenetre.getContainer().getDocumentPDF2().setVisible(true);
                 fenetre.getContainer().getDocumentPDF().setVisible(false);
@@ -211,7 +214,10 @@ public class ButtonPanel {
         // évènement qui dezoom un pdf
         dezoom.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+<<<<<<< HEAD
                 verifZoom = false;
+=======
+>>>>>>> 00885a8cf1a5410491a6b07b2dfc5a92d7d76cb6
                 fenetre.getContainer().setZoomed(false);
                 fenetre.getContainer().getDocumentPDF2().setVisible(false);
                 fenetre.getContainer().getDocumentPDF().setVisible(true);
