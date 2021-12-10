@@ -1,8 +1,14 @@
+/*-----------------------------------------------------------------------------------------
+ *                                                                                        *
+ *  IUT de RODEZ département informatique - Projet tutoré PDF double affichage            *
+ *  Groupe : Eva SIMON, Thomas EMILE, Steavn LAVILLE, Yann MOTTOLA, Pierre LESTRINGUEZ    *
+ *                                                                                        *
+ * ----------------------------------------------------------------------------------------
+ */
+
 package gestionPDF;
 
-import javax.swing.*;
 import java.awt.event.*;
-import java.util.ArrayList;
 
 public class Clavier implements KeyListener, MouseWheelListener, MouseMotionListener, MouseListener {
 
@@ -48,7 +54,7 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
      */
     @Override
     public void keyPressed(KeyEvent e) {
-
+        // code de la touche qui a été enfoncée
         int code = e.getKeyCode();
         if (fenetreApp.getButton().getChoixPage().hasFocus()) {
             switch (code) {
@@ -56,9 +62,7 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
                     fenetreApp.mainWindow.requestFocus();
                     break;
                 case (KeyEvent.VK_ENTER):
-                    if (fenetreApp.getButton().getChoixPage().hasFocus()) {
-                        fenetreApp.mainWindow.requestFocus();
-                    }
+                    fenetreApp.mainWindow.requestFocus();
                     break;
             }
         } else {
@@ -82,29 +86,82 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
                     fenetreApp.getButton().getChoixPage().selectAll();
                     break;
                 case (KeyEvent.VK_A) :
-                    ArrayList<JLabel> pdf = new ArrayList<JLabel>();
-
+                    zoom();
+                    break;
             }
         }
     }
 
-    private void pagePrecedente() {
-        System.out.println(buttonPanel.c.getValue());
-        if (buttonPanel.c.getValue() != 0) {
-            buttonPanel.c.decrease();
-            y = (fenetreApp.getContainer().getHeight() + fenetreApp.getButton().getTailleEspace()) * (buttonPanel.c.getValue());
-            fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().setValue(y);
-            fenetreApp.getButton().getChoixPage().setText(String.valueOf(1 + buttonPanel.c.getValue()));
+    /**
+     * Méthode de zoom quand la touche a est enfoncée.
+     * Affiche le bon documentPDF et rend l'autre non visible
+     */
+    public void zoom() {
+        int page = fenetreApp.getButton().getC().getValue();
+        if (!containerPDF.isZoomed()) {
+            containerPDF.setZoomed(true);
+            containerPDF.getDocumentPDF2().setVisible(true);
+            containerPDF.getDocumentPDF().setVisible(false);
+        } else {
+            containerPDF.setZoomed(false);
+            containerPDF.getDocumentPDF2().setVisible(false);
+            containerPDF.getDocumentPDF().setVisible(true);
+        }
+        fenetreApp.getButton().getC().setValue(page);
+        goToZoom();
+    }
+
+    /**
+     * Affiche la page du compteur
+     */
+    public void goTo() {
+        int c;
+        if (containerPDF.isZoomed()) {
+            c = fenetreApp.getButton().getC().getValue();
+            containerPDF.getScrollPaneContainer().getVerticalScrollBar().setValue(c
+                     * (containerPDF.getPagePDF2().get(c).getHeight() + buttonPanel.getTailleEspace()));
+        } else {
+            c = fenetreApp.getButton().getC().getValue();
+            containerPDF.getScrollPaneContainer().getVerticalScrollBar().setValue(c
+                    * (containerPDF.getPagePDF().get(c).getHeight() + buttonPanel.getTailleEspace()));
         }
     }
 
+    /**
+     * Affiche la page du compteur
+     */
+    public void goToZoom() {
+        int c;
+        if (containerPDF.isZoomed()) {
+            c = fenetreApp.getButton().getC().getValue();
+            containerPDF.getScrollPaneContainer().getVerticalScrollBar().setValue(c
+                    * (containerPDF.getPagePDF2().get(c).getHeight()));
+        } else {
+            c = fenetreApp.getButton().getC().getValue();
+            containerPDF.getScrollPaneContainer().getVerticalScrollBar().setValue(c
+                    * (containerPDF.getPagePDF().get(c).getHeight()));
+        }
+    }
+    /**
+     * Affiche la page précédente
+     */
+    private void pagePrecedente() {
+        if (buttonPanel.getC().getValue() != 0) {
+            buttonPanel.getC().decrease();
+            goTo();
+            updateCounter();
+        }
+    }
+
+    /**
+     * Affiche la page suivante
+     */
     private void pageSuivante() {
-        System.out.println(buttonPanel.c.getValue());
-        if (buttonPanel.c.getValue() != fenetreApp.getContainer().getNombrePage() - 1) {
-            buttonPanel.c.increment();
-            y = (fenetreApp.getContainer().getHeight() + fenetreApp.getButton().getTailleEspace()) * (buttonPanel.c.getValue());
-            fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().setValue(y);
-            fenetreApp.getButton().getChoixPage().setText(String.valueOf(1 + buttonPanel.c.getValue()));
+        if (buttonPanel.getC().getValue() != fenetreApp.getContainer().getNombrePage() - 1) {
+            buttonPanel.getC().increment();
+            goTo();
+            updateCounter();
+
         }
     }
 
@@ -129,38 +186,57 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
     @Override
     public void mouseWheelMoved(MouseWheelEvent e) {
         double notches = e.getPreciseWheelRotation();
-        System.out.println(notches);
         if (notches < 0) {
             monter();
+
         } else {
             descendre();
         }
     }
 
 
-
+    /**
+     * Scroll dans le document vers le bas
+     */
     private void descendre() {
         int y = fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().getValue();
         fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().setValue(y+50);
-
-        if ( buttonPanel.c.getValue() != fenetreApp.getContainer().getNombrePage()-1) {
-            buttonPanel.c.setValue( fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().getValue()/fenetreApp.getContainer().getHeight());
-
-            fenetreApp.getButton().getChoixPage().setText(String.valueOf(1 + buttonPanel.c.getValue()));
-        }
+        updateCounter();
     }
 
+
+
+    /**
+     * Scroll dans le document vers le Haut
+     */
     private void monter() {
         int y = fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().getValue();
         fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().setValue(y-50);
-        if ( buttonPanel.c.getValue() != 0) {
-            buttonPanel.c.setValue( fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().getValue()/fenetreApp.getContainer().getHeight());
-
-            fenetreApp.getButton().getChoixPage().setText(String.valueOf(1 + buttonPanel.c.getValue()));
-        }
+        updateCounter();
     }
 
 
+    /**
+     * Actualise la valeur du compteur (page courante)
+     * en fonction de si la page est zoomée ou non
+     */
+    private void updateCounter() {
+
+            if (buttonPanel.getC().getValue() != fenetreApp.getContainer().getNombrePage() - 1) {
+                if (!containerPDF.isZoomed()) {
+                    buttonPanel.getC().setValue(fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().getValue()
+                            / fenetreApp.getContainer().getHeight());
+                } else {
+                    buttonPanel.getC().setValue(fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().getValue()
+                            / fenetreApp.getContainer().getPagePDF2().get(buttonPanel.getC().getValue
+                            ()).getHeight());
+
+                }
+                // Affiche la valeur du nouveau counter
+                fenetreApp.getButton().getChoixPage().setText(String.valueOf(1 + buttonPanel.getC().getValue()));
+            }
+
+    }
 
 
     /**
@@ -178,10 +254,7 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
      */
     @Override
     public void mouseDragged(MouseEvent e) {
-        y = fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().getValue();
-        System.out.println(y);
-        buttonPanel.c.setValue(fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().getValue()/fenetreApp.getContainer().getHeight());
-        fenetreApp.getButton().getChoixPage().setText(String.valueOf(1 + buttonPanel.c.getValue()));
+        updateCounter();
     }
 
     /**
@@ -203,10 +276,7 @@ public class Clavier implements KeyListener, MouseWheelListener, MouseMotionList
      */
     @Override
     public void mouseClicked(MouseEvent e) {
-        y = fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().getValue();
-        System.out.println(y);
-        buttonPanel.c.setValue(fenetreApp.getContainer().getScrollPaneContainer().getVerticalScrollBar().getValue()/fenetreApp.getContainer().getHeight());
-        fenetreApp.getButton().getChoixPage().setText(String.valueOf(1 + buttonPanel.c.getValue()));
+        updateCounter();
     }
 
     /**

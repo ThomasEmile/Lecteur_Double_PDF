@@ -4,6 +4,13 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileSystemView;
 
+/*-----------------------------------------------------------------------------------------
+ *                                                                                        *
+ *  IUT de RODEZ département informatique - Projet tutoré PDF double affichage            *
+ *  Groupe : Eva SIMON, Thomas EMILE, Steavn LAVILLE, Yann MOTTOLA, Pierre LESTRINGUEZ    *
+ *                                                                                        *
+ * ----------------------------------------------------------------------------------------
+ */
 
 public class FileChooser {
 

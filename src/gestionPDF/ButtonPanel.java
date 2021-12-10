@@ -1,3 +1,14 @@
+/*-----------------------------------------------------------------------------------------
+ *                                                                                        *
+ *  IUT de RODEZ département informatique - Projet tutoré PDF double affichage            *
+ *  Groupe : Eva SIMON, Thomas EMILE, Steavn LAVILLE, Yann MOTTOLA, Pierre LESTRINGUEZ    *
+ *                                                                                        *
+ * ----------------------------------------------------------------------------------------
+ */
+
+/*
+ *  gestion des buttons que l'on va implémenter dans l'application
+ */
 package gestionPDF;
 
 import javax.swing.*;
@@ -5,55 +16,90 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * Cette classe s'occupe de gérer la configuration des buttons de l'application. L'application contient également
+ * la méthode ajoutComposants qui permet comme son nom l'indique, d'implémenter les composants de manière correcte
+ * dans une fenêtre de type JFrame, fenètre que l'on va ensuite afficher à l'écran.
+ * @author Groupe Pdf Double affichage
+ * @version 1.0
+ */
 public class ButtonPanel {
 
-    private int tailleEspace = 22;
-    private JPanel containerButton;
+    private int tailleEspace = 22; // entier qui représente la taille d'un espace entre chaque page
+    private JPanel containerButton; // panel qui contiendra les buttons de l'application
 
+    // création de la MenuBar afin d'implémenter les fonctionnalités : ouvrir, fermer et réduire un document pdf
     private JMenuBar menuBarMainWindow;
     private JMenu menuMainWindow;
     private JMenuItem ouvrir;
     private JMenuItem fermer;
     private JMenuItem reduire;
-    private boolean verifZoom = false;
-    private JButton zoom;
-    private JButton dezoom;
-    private JButton pageSuivante;
-    private JButton pagePrecedente;
-    private JTextField choixPage;
-    private JLabel nombreDePage;
-    private FenetreApp fenetre;
 
+    private boolean verifZoom = false; //boolean qui vérifi si oui ou non le button zoom a été appuyé
 
+    private Counter c; // création d'un counter permettant de récupérer le numéro de page courant du pdf
+
+    private JButton zoom; // button qui permet d'afficher le panel contenant le fichier pdf zoomé
+    private JButton dezoom; // button qui permet d'afficher le panel contenant le fichier pdf zoomé
+    private JButton pageSuivante; // button qui permet de passer à la page suivante
+    private JButton pagePrecedente;// button qui permet de passer à la page precedente
+    private JTextField choixPage; // champ de texte qui d'afficher la page du pdf rentrée en argument
+    private JLabel nombreDePage;  // label qui affiche le nombre de page du document pdf
+
+    private FenetreApp fenetre;  // implémentation de la classe FenetreApp afin de pouvoir accéder à ses méthodes
+
+    /**
+     * constructeur de la classe ButtonPanel
+     * @param fenetre
+     */
     public ButtonPanel(FenetreApp fenetre) {
         this.fenetre = fenetre;
+
+        //initialisation des différents composants de la classe
         containerButton = new JPanel();
         menuBarMainWindow = new JMenuBar();
         menuMainWindow = new JMenu("Fichier");
-        ouvrir = new JMenuItem("ouvrir");
-        fermer = new JMenuItem("fermer");
-        reduire = new JMenuItem("reduire");
+        ouvrir = new JMenuItem("Ouvrir");
+        fermer = new JMenuItem("Fermer");
+        reduire = new JMenuItem("Reduire");
         pageSuivante = new JButton("↓");
+        pageSuivante.setFocusable(false);
         pagePrecedente = new JButton("↑");
+        pagePrecedente.setFocusable(false);
         zoom = new JButton("+");
+        zoom.setFocusable(false);
         dezoom = new JButton("-");
+        dezoom.setFocusable(false);
         choixPage = new JTextField(2);
-        nombreDePage = new JLabel("| " + String.valueOf(fenetre.getContainer().getNombrePage()));
+        nombreDePage = new JLabel("| " + String.valueOf(1));
+        nombreDePage.setFocusable(false);
+        c = new Counter();
+
+        //appel des méthodes de la classe
         configButton();
         ajoutComposants();
     }
 
-    public int getTailleEspace() {
-        return tailleEspace;
+    // Getter de la classe ButtonPanel
+    public int getTailleEspace() {return tailleEspace;}
+    public JTextField getChoixPage() {return choixPage;}
+    public Counter getC() {return c;}
+
+    public JPanel getContainerButton() {
+        return containerButton;
     }
 
-    // déclaration de deux objets Counter
-    Counter c = new Counter();
-
-    public JTextField getChoixPage() {
-        return choixPage;
+    public void setNombreDePage(int nbDePage) {
+        this.nombreDePage.setText("|" + String.valueOf(nbDePage));
     }
 
+    public void setChoixPage(int i) {
+        this.choixPage.setText(String.valueOf(i));
+    }
+
+    /**
+     * configuration des différents buttons de la classe
+     */
     void configButton() {
 
         pageSuivante.setPreferredSize(new Dimension(50,40));
@@ -148,14 +194,14 @@ public class ButtonPanel {
         // évènement qui ouvre un nouveau document pdf
         ouvrir.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //TODO
+                fenetre.getContainer().createPdf();
             }
         });
 
         // évènement qui zoom un pdf
         zoom.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                verifZoom = true;
+                fenetre.getContainer().setZoomed(true);
                 fenetre.getContainer().getDocumentPDF2().setVisible(true);
                 fenetre.getContainer().getDocumentPDF().setVisible(false);
             }
@@ -164,13 +210,16 @@ public class ButtonPanel {
         // évènement qui dezoom un pdf
         dezoom.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                verifZoom = false;
+                fenetre.getContainer().setZoomed(false);
                 fenetre.getContainer().getDocumentPDF2().setVisible(false);
                 fenetre.getContainer().getDocumentPDF().setVisible(true);
             }
         });
     }
 
+    /**
+     * ajout des composants de l'application aux JFrame mainWindow
+     */
     void ajoutComposants() {
         fenetre.getMainWindow().setJMenuBar(menuBarMainWindow);
         menuMainWindow.add(ouvrir);
@@ -191,6 +240,9 @@ public class ButtonPanel {
         fenetre.getMainWindow().validate();
     }
 
+    /**
+     * classe permettant, par le biais d'un compteur, de récupérer de le numéro de la page courante du fichier pdf
+     */
     static class Counter {
 
         private int value = 0;
