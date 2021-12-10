@@ -201,6 +201,7 @@ public class ButtonPanel {
         // évènement qui zoom un pdf
         zoom.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                verifZoom = true;
                 fenetre.getContainer().setZoomed(true);
                 fenetre.getContainer().getDocumentPDF2().setVisible(true);
                 fenetre.getContainer().getDocumentPDF().setVisible(false);
@@ -210,6 +211,7 @@ public class ButtonPanel {
         // évènement qui dezoom un pdf
         dezoom.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+                verifZoom = false;
                 fenetre.getContainer().setZoomed(false);
                 fenetre.getContainer().getDocumentPDF2().setVisible(false);
                 fenetre.getContainer().getDocumentPDF().setVisible(true);

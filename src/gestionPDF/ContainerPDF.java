@@ -123,6 +123,8 @@ public class ContainerPDF implements Runnable {
      */
     void createPdf() {
         try (PDDocument document = PDDocument.load(new File(FileChooser.Chooser()))) {
+            documentPDF.removeAll();
+            documentPDF2.removeAll();
             //nombre de page du document
             nombrePage = document.getNumberOfPages();
             // page courante affichée =  première page
@@ -179,7 +181,6 @@ public class ContainerPDF implements Runnable {
      * puis stocké dans un Label qui va ensuite être stocké dans un panel
      */
     void createPageZoom(int page, PDDocument document) throws IOException {
-
         //nombre de page du document
         nombrePage = document.getNumberOfPages();
 
@@ -197,7 +198,6 @@ public class ContainerPDF implements Runnable {
         ImageIcon icon2 = new ImageIcon(img2);
         width = 1870;
         heightZoom = (icon2.getIconHeight() * width) / icon2.getIconWidth();
-        ;
 
         // transform it
         Image image = icon2.getImage();
