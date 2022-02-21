@@ -6,231 +6,303 @@
  * ----------------------------------------------------------------------------------------
  */
 
-package gestionPDF;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Cette classe s'occupe de créer les deux documents PDF, à savoir sa version de base et sa version zoomé.
- * Les documents du pdf vont être placé dans une arrayList de JLabel qui va ensuite être stocké dans un premier
- * container qui va lui aussi être stocké dans un nouveau container (qui pour le s4 permettra de stocker le deuxième
- * document pdf)
- * @author Groupe pdf double affichage
- * @version 1.0
+ * Classe qui gère l'affichage du pdf
  */
-public class ContainerPDF implements Runnable {
+public class ContainerPDF {
 
-    private boolean zoomed = false;
+    /** True si le pdf est zoomé, false sinon */
+    public boolean zoomed = false;
 
-    private int height = 0; // initialisation d'un entier qui va contenir la hauteur du document de base
-    private int width = 0;  // initialisation d'un entier qui va contenir la largeur du document de base
-    private int heightZoom = 0;  // initialisation d'un entier qui va contenir la longueur du document zoomé
-    private int nombrePage = 0;  // initialisation d'un entier qui va contenir la hauteur du document zoomé
+    /** True si le pdf doit être redimensionner, false sinon */
+    public boolean redimensionner = true;
 
-    public JScrollPane scrollPaneContainer; // création d'un scroll pour pouvoir naviguer facilement entre les pages du pdf
-    private JPanel containerDocumentPDF; // panel contenant le panel du pdf
-    public JPanel documentPDF;  // création du panel contenant l'arrayList du pdf de base
-    public JPanel documentPDF2; // création du panel contenant l'arraylist du pdf zoomé
-    private ArrayList<JLabel> pagePDF; // création de l'arrayList contenant les pages du document pdf de base
-    private ArrayList<JLabel> pagePDF2; // création de l'arrayList contenant les pages du document pdf zoomé
+    /** True si la page affichée doit être actualisée, false sinon */
+    public boolean updateScrollBar;
 
-    public FenetreApp fenetre; // implémentation de la classe FenetreApp afin de pouvoir accéder à ses méthodes
+    /** Stock les dimensions de base des pages (non zoomée) */
+    private ArrayList<Dimension> dimensionDeBase;
+
+    /** Hauteur total du document affiché (avec les espaces) */
+    public int heightTotal = 0;
+
+    /** Nombre de page total du document pdf */
+    public int nombrePage;
+
+    /** Page actuellement affichée  */
+    private int pageActuelle = 1;
+
+    /** JScrollPane qui contient le containerDocumentPDF */
+    public JScrollPane scrollPaneContainer;
+
+    /** JPanel qui contient le documentPDF */
+    public JPanel containerDocumentPDF;
+
+    /** JPanel qui contient le pdf */
+    public JPanel documentPDF;
+
+    /** champ d'accès à la fenêtre */
+    public FenetreApp fenetre;
+
+    /** Liste des espaces */
+    private ArrayList<JPanel> espaces;
+
+    /** Liste des pages  */
+    private ArrayList<PanelImage> pages;
+
+    /** Le PDF renderer qui permet de faire le rendu d'une page pdf en image */
+    private PDFRenderer pdfRenderer;
+
+    /** Dimension d'un espace */
+    private Dimension dimensionEspace;
+
+    /** ratio de zoom/dezoom */
+    double ratio = 1;
 
     /**
-     * constructeur de la classe ContainerPDF
-     * @param fenetre
+     * Constructeur de la classe ContainerPDF
+     * Initialise les champs de la classe
+     * Puis, créer le pdf
+     * @param fenetre lien vers la fenêtre
+     * @param document lien vers le pdf à affiché
      */
-    public ContainerPDF(FenetreApp fenetre) {
-        this.fenetre = fenetre;
-        //initialisation des différents composants de la classe
-        containerDocumentPDF = new JPanel();
-        scrollPaneContainer = new JScrollPane(containerDocumentPDF);
-        documentPDF = new JPanel();
-        documentPDF2 = new JPanel();
-        pagePDF = new ArrayList<JLabel>();
-        pagePDF2 = new ArrayList<JLabel>();
+    public ContainerPDF(FenetreApp fenetre, PDDocument document) {
+        initComponent(fenetre, document);
+        createPDF();
+    }
 
-        // appel des différentes méthodes de la classe
+    /**
+     * Initialise les champs de la classe
+     * @param fenetre lien vers la fenêtre
+     * @param document lien vers le pdf à affiché
+     */
+    private void initComponent(FenetreApp fenetre, PDDocument document) {
+        dimensionDeBase = new ArrayList<>();
+        espaces = new ArrayList<>();
+        pages = new ArrayList<>();
+        containerDocumentPDF = new JPanel();
+        containerDocumentPDF.setBackground(Color.darkGray);
+        scrollPaneContainer = new JScrollPane(containerDocumentPDF);
+        scrollPaneContainer.setBackground(Color.darkGray);
+        documentPDF = new JPanel();
+        documentPDF.setBackground(Color.DARK_GRAY);
+        this.fenetre = fenetre;
+        pdfRenderer = new PDFRenderer(document);
         configContainerPDF();
         configScrollPaneContainer();
-
-        // on cache le pdf zoomé afin qu'à l'ouverture de l'application, l'on ne voit que le pdf au format de base
-        getDocumentPDF2().setVisible(false);
+        // Nombre de page du document
+        nombrePage = document.getNumberOfPages();
+        // Actualise le champ graphique du nombre max de page
+        fenetre.getButton().nombreDePage.setText(" | " + nombrePage);
     }
 
-    // Getter de la classe ContainerPDF
-    public int getHeightZoom() {
-        return heightZoom;
+    /**
+     * Setter de pageActuelle
+     * @param pageActuelle
+     */
+    public void setPageActuelle(int pageActuelle) {
+        this.pageActuelle = pageActuelle;
     }
-    public JPanel getDocumentPDF2() {
-        return documentPDF2;
+
+    /**
+     * Getter de nombrePage
+     * @return nombrePage
+     */
+    public int getNombrePage() {
+        return nombrePage;
     }
-    public int getHeight() {return height;}
-    public int getNombrePage() {return nombrePage;}
-    public ArrayList<JLabel> getPagePDF() {
-        return pagePDF;
+
+    /**
+     * Getter scrollPaneContainer
+     * @return scrollPaneContainer
+     */
+    public JScrollPane getScrollPaneContainer() {
+        return scrollPaneContainer;
     }
-    public ArrayList<JLabel> getPagePDF2() {return this.pagePDF2;}
-    public JScrollPane getScrollPaneContainer() {return scrollPaneContainer;}
+
+    /**
+     * Getter dimensionEspace
+     * @return dimensionEspace
+     */
+    public Dimension getDimensionEspace() {
+        return dimensionEspace;
+    }
+
+    /**
+     * Getter pages
+     * @return pages
+     */
+    public ArrayList<PanelImage> getPages() {
+        return pages;
+    }
+
+    /**
+     *  Getter containerDocumentPDF
+     * @return containerDocumentPDF
+     */
     public JPanel getContainerDocumentPDF() {
         return containerDocumentPDF;
     }
-    public JPanel getDocumentPDF() {return documentPDF;}
 
-    public boolean isZoomed() {
-        return zoomed;
-    }
-
-    public void setZoomed(boolean zoomed) {
-        this.zoomed = zoomed;
-    }
-
-    /**
-     * méthode qui permet d'afficher les pages du pdf les unes en dessous des autres
-     */
     void configContainerPDF() {
-
         documentPDF.setLayout(new BoxLayout(documentPDF, BoxLayout.Y_AXIS));
-        documentPDF2.setLayout(new BoxLayout(documentPDF2, BoxLayout.Y_AXIS));
     }
 
-    /**
-     * méthode qui configure la barre de scroll de l'application
-     */
     void configScrollPaneContainer() {
         scrollPaneContainer.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-        // réglage du saute de la barre de scroll
-        scrollPaneContainer.getVerticalScrollBar().setUnitIncrement(20);
-        scrollPaneContainer.getHorizontalScrollBar().setUnitIncrement(20);
     }
 
+
     /**
-     * méthode qui va permettre la création d'un fichier pdf. Elle utilise tout d'abord un objet PDDocument qui récupère,
-     * un document pdf à l'aide de son chemin, choisi par l'utilisateur à l'aide d'un file chooser. le document pdf est
-     * ensuite rendu à l'aide de la classe PDFRenderer. A l'aide de ce rendu nous allons pouvoir créer un objet  Buffer
-     * Image qui va créer une image représentant une page du pdf choisi. cette image va ensuite être converti en ImageIcon
-     * afin de pouvoir la redimentionner. Après le resize de l'image, cette dernière va une nouvelle fois être converti
-     * puis stocké dans un Label qui va ensuite être stocké dans un panel
+     * Création du pdf à l'ouverture de la fenêtre
      */
-    void createPdf() {
-        try (PDDocument document = PDDocument.load(new File(FileChooser.Chooser()))) {
-            documentPDF.removeAll();
-            documentPDF2.removeAll();
-            //nombre de page du document
-            nombrePage = document.getNumberOfPages();
-            // page courante affichée =  première page
-            fenetre.getButton().setChoixPage(1);
-            // Affiche le nombre de page du document
-            fenetre.getButton().setNombreDePage(nombrePage);
+    public void createPDF() {
 
-            //creation d'un objet PDFRenderer
-            PDFRenderer pdfRenderer = new PDFRenderer(document);
-            //implémentation des pages du fichier pdf dans un tableau de label
-            for (int page = 0; page < document.getNumberOfPages(); ++page) {
-                JTextArea espace = new JTextArea();
-                JLabel containerPagePDF = new JLabel("");
-                pagePDF.add(containerPagePDF);
-                containerPagePDF.setFocusable(false);
-                espace.setFocusable(false);
+        pageActuelle = fenetre.getButton().c.getValue();
+        heightTotal = 0;
 
+        dimensionEspace = new Dimension(10, 100);
+        try {
+            /* Transforme la page 0 du document en BufferedImage */
+            BufferedImage img = pdfRenderer.renderImageWithDPI(0, 100);
+            for (int i = 0; i < nombrePage; i++) {
+                PanelImage unBlanc = new PanelImage();
+                JPanel unEspace = new JPanel();
 
-                BufferedImage img = pdfRenderer.renderImageWithDPI(page, 80);
-                ImageIcon icon = new ImageIcon(img);
-                height = 1000;
-                width = (icon.getIconWidth() * height) / icon.getIconHeight();
+                dimensionDeBase.add(new Dimension(img.getWidth(), img.getHeight()));
+                setDimensions(i, unBlanc, unEspace);
+                documentPDF.add(unEspace);
+                /* On affiche les 5 images avant la n°i et les 5 après, le reste du documents reste des
+                 * pages blanches
+                 */
+                if (i <= fenetre.getButton().c.getValue() + 5 && i >= fenetre.getButton().c.getValue() - 5) {
+                    /* Transformation de la page du pdf n°i en une BufferedImage */
+                    BufferedImage img1 = pdfRenderer.renderImageWithDPI(i, 100);
+                    /* Création du panel contenant l'image i */
+                    PanelImage panelImage = new PanelImage(img1, img1.getWidth(), img1.getHeight());
+                    /* Ajout du panel contenant l'image de la page i au total des pages */
+                    pages.add(i, panelImage);
+                    /* Ajout du panel contenant l'image de la page i au JPanel représentant le document pdf en entier */
+                    documentPDF.add(panelImage);
+                    /* Painte de l'image */
+                    panelImage.paint(panelImage.getGraphics());
 
-                // transform it
-                Image image = icon.getImage();
-                // scale it the smooth way
-                Image newimg = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-                // transform it back
-                icon = new ImageIcon(newimg);
-                pagePDF.get(page).setIcon(icon);
-                documentPDF.setFocusable(false);
-                espace.setBackground(new Color(239, 237, 237));
-                documentPDF.add(pagePDF.get(page));
-                if (page != document.getNumberOfPages() - 1) {
-                    documentPDF.add(espace);
+                } else {
+                    /*
+                     * Si on ne se trouve pas dans les 5 pages avant ou après la page affichée alors on
+                     * laisse des panels blanc aux tailles des pages pdf
+                     */
+                    unBlanc.setTaille(img.getWidth(), img.getHeight());
+                    pages.add(i, unBlanc);
+                    documentPDF.add(unBlanc);
+                    pages.get(i).paint(unBlanc.getGraphics());
                 }
-
-                fenetre.getBackground().updateUI();
-                createPageZoom(page, document);
-
+                /* Actualisation de la hauteur totale du documentPDF*/
+                heightTotal+= pages.get(i).height + unEspace.getHeight();
+                espaces.add(unEspace);
             }
-        } catch (
-                IOException e) {
-            System.err.println("Exception while trying to create pdf document - " + e);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        /* Actualise visuellement le documentPDF */
+        documentPDF.updateUI();
     }
 
     /**
-     * méthode qui va permettre la création du zoom du fichier pdf. Elle utilise tout d'abord un objet PDDocument qui
-     * récupère,un document pdf à l'aide de son chemin, choisi par l'utilisateur à l'aide d'un file chooser. le document pdf est
-     * ensuite rendu à l'aide de la classe PDFRenderer. A l'aide de ce rendu nous allons pouvoir créer un objet  Buffer
-     * Image qui va créer une image représentant une page du pdf choisi. cette image va ensuite être converti en ImageIcon
-     * afin de pouvoir la redimentionner. Après le resize de l'image, cette dernière va une nouvelle fois être converti
-     * puis stocké dans un Label qui va ensuite être stocké dans un panel
+     * Actualisation du pdf
      */
-    void createPageZoom(int page, PDDocument document) throws IOException {
-        //nombre de page du document
-        nombrePage = document.getNumberOfPages();
+    void updatePDF() {
+        if (pageActuelle < fenetre.getButton().c.getValue() - 3 || pageActuelle > fenetre.getButton().c.getValue() + 3) {
+            pageActuelle = fenetre.getButton().c.getValue();
+            /* Reinitialise la hauteur du document */
+            heightTotal = 0;
+            /* Recalcule la largeur d'un espace en fonction de la largeur de la fenêtre */
+            dimensionEspace = new Dimension(fenetre.mainWindow.getWidth(), 100);
+            try {
+                /* Transforme la page 0 du document en BufferedImage */
+                BufferedImage img = pdfRenderer.renderImageWithDPI(0, 100);
+                /* On détermine le ration de zoom (1 si pas zoomé) */
+                ratio = zoomed ?
+                        (double) (fenetre.mainWindow.getWidth()) / (double) img.getWidth()
+                        : 1;
 
-        //creation d'un objet PDFRenderer
-        PDFRenderer pdfRenderer2 = new PDFRenderer(document);
-        //implémentation des pages du fichier pdf dans un tableau de label
+                for (int i = 0; i < nombrePage; i++) {
+                    /* Redéfini les dimension de base des pages */
+                    dimensionDeBase.set(i, new Dimension(fenetre.mainWindow.getWidth(),
+                        (int) (img.getHeight() * ratio)));
 
-        JTextArea espace2 = new JTextArea();
-        JLabel containerPagePDF2 = new JLabel("");
-        pagePDF2.add(containerPagePDF2);
-        containerPagePDF2.setFocusable(false);
-        espace2.setFocusable(false);
+                    /* Change la taille du panel contenant l'image en multipliant ses dimensions par
+                     * le ratio
+                     */
+                    pages.get(i).dimension(ratio, img);
 
-        BufferedImage img2 = pdfRenderer2.renderImageWithDPI(page, 120);
-        ImageIcon icon2 = new ImageIcon(img2);
-        width = 1870;
-        heightZoom = (icon2.getIconHeight() * width) / icon2.getIconWidth();
-
-        // transform it
-        Image image = icon2.getImage();
-        // scale it the smooth way
-        Image newimg = image.getScaledInstance(width, heightZoom, Image.SCALE_SMOOTH);
-        // transform it back
-        icon2 = new ImageIcon(newimg);
-        pagePDF2.get(page).setIcon(icon2);
-        documentPDF2.setFocusable(false);
-        espace2.setBackground(new Color(239, 237, 237));
-        documentPDF2.add(pagePDF2.get(page));
-        if (page != document.getNumberOfPages() - 1) {
-            documentPDF2.add(espace2);
+                    /* On affiche les 5 images avant la n°i et les 5 après, le reste du documents reste des
+                     * pages blanches
+                     */
+                    if (i < fenetre.getButton().c.getValue() + 5 && i > fenetre.getButton().c.getValue() - 5) {
+                        /* Si il y avait déjà une image, on la redimensionne.. */
+                        if (pages.get(i).image != null) {
+                            pages.get(i).setTaille((int) (img.getWidth() * ratio), (int) (img.getHeight() * ratio));
+                            pages.get(i).paint(pages.get(i).getGraphics());
+                        } else {
+                            /* ..Sinon on charge l'image et on l'affiche au bonne dimension */
+                            pages.get(i).setImage(pdfRenderer.renderImageWithDPI(i, 100));
+                            pages.get(i).setTaille((int) (img.getWidth() * ratio), (int) (img.getHeight() * ratio));
+                            pages.get(i).paint(pages.get(i).getGraphics());
+                        }
+                    /*
+                    * Si on ne se trouve pas dans les 5 pages avant ou après la page affichée alors on
+                    * laisse des panels blanc aux tailles des pages pdf
+                    */
+                    } else {
+                        pages.get(i).setTaille((int) (img.getWidth() * ratio), (int) (img.getHeight() * ratio));
+                        pages.get(i).paint(pages.get(i).getGraphics());
+                    }
+                    /* Actualisation de la hauteur totale du documentPDF*/
+                    heightTotal += (pages.get(i).height + dimensionEspace.height);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        fenetre.getBackground().updateUI();
+        /* Actualise visuellement le documentPDF */
+        documentPDF.updateUI();
     }
-
-
 
     /**
-     * When an object implementing interface {@code Runnable} is used
-     * to create a thread, starting the thread causes the object's
-     * {@code run} method to be called in that separately executing
-     * thread.
-     * <p>
-     * The general contract of the method {@code run} is that it may
-     * take any action whatsoever.
-     *
-     * @see Thread#run()
+     * Etablie les dimensions d'une page et d'un espace
      */
-    @Override
-    public void run() {
-        createPdf();
+    private void setDimensions(int i, JPanel unPage, JPanel unEspace) {
+        unEspace.setPreferredSize(dimensionEspace);
+        unEspace.setMinimumSize(dimensionEspace);
+        unEspace.setMaximumSize(dimensionEspace);
+        unEspace.setBackground(Color.DARK_GRAY);
+        unPage.setBackground(Color.white);
+        unPage.setPreferredSize(dimensionDeBase.get(i));
+        unPage.setMinimumSize(dimensionDeBase.get(i));
+        unPage.setMaximumSize(dimensionDeBase.get(i));
     }
+
+    /**
+     * Méthode qui détermine le numéro de la page affichée, l'affiche
+     * dans l'indicateur et actualise le compteur de page
+     */
+    public void updatePageCourante() {
+        int pageActuelle = ((scrollPaneContainer.getVerticalScrollBar().getValue() - espaces.get(0).getHeight())
+                / (pages.get(0).height + espaces.get(0).getHeight()) + 1);
+        fenetre.getButton().choixPage.setText("" + pageActuelle);
+        fenetre.getButton().c.setValue(pageActuelle);
+    }
+
 
 }
+

@@ -1,9 +1,3 @@
-package gestionPDF;
-
-import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.filechooser.FileSystemView;
-
 /*-----------------------------------------------------------------------------------------
  *                                                                                        *
  *  IUT de RODEZ département informatique - Projet tutoré PDF double affichage            *
@@ -11,6 +5,12 @@ import javax.swing.filechooser.FileSystemView;
  *                                                                                        *
  * ----------------------------------------------------------------------------------------
  */
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileSystemView;
+
+
 
 public class FileChooser {
 
