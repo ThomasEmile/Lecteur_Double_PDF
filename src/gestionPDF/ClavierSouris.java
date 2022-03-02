@@ -8,19 +8,38 @@
 
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 /**
- * Méthode de gestion de tout les événements clabier et souris
+ * Méthode de gestion de tout les événements clavier et souris
  */
 public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMotionListener, MouseListener, ComponentListener {
 
     /** Champ d'accès au containerPDF */
     private ContainerPDF containerPDF;
     /** Champ d'accès au buttonPanel */
-    private ButtonPanel buttonPanel;
-    /** Champ d'accès au fenetreApp */
-    private FenetreApp fenetreApp;
+    private Menu buttonPanel;
+    /** Champ d'accès aux fenetreApp */
+    private  ArrayList<FenetreApp> fenetreApp;
+    /** Mode unifié */
+    private static boolean unified = false;
+
+    /**
+     * Constructeur par défaut de la classe ClavierSouris
+     */
+    public ClavierSouris() {
+        fenetreApp = new ArrayList<>();
+    }
+
+    /**
+     * Getter de fenetreApp
+     * @return fenetreApp
+     */
+    public ArrayList<FenetreApp> getFenetreApp() {
+        return fenetreApp;
+    }
 
     /**
      * Initialise containerPDF avec le ContainerPDF passé en paramètre
@@ -35,16 +54,67 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      * Initialise buttonPanel avec le ButtonPanel passé en paramètre
      * @param buttonPanel le nouveau ButtonPanel
      */
-    public void setButtonPanel(ButtonPanel buttonPanel) {
+    public void setButtonPanel(Menu buttonPanel) {
         this.buttonPanel = buttonPanel;
     }
 
     /**
-     * Initialise fenetreApp avec la FenetreApp passé en paramètre
+     * Initialise fenetreApp[i] avec la FenetreApp passé en paramètre
      * @param fenetreApp le nouveau FenetreApp
      */
     public void setFenetreApp(FenetreApp fenetreApp) {
-        this.fenetreApp = fenetreApp;
+        if (this.fenetreApp == null) {
+            this.fenetreApp = new ArrayList<>();
+            this.fenetreApp.add(0, fenetreApp);
+        } else if (this.fenetreApp.size() == 0) {
+            this.fenetreApp.add(0, fenetreApp);
+        } else if (this.fenetreApp.size() == 1) {
+            //get local graphics environment
+            GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            //get maximum window bounds
+            Rectangle maximumWindowBounds = graphicsEnvironment.getMaximumWindowBounds();
+            int largeurEcran = maximumWindowBounds.width;
+            int hauteurEcran = maximumWindowBounds.height;
+            this.fenetreApp.add(1, fenetreApp);
+            this.fenetreApp.get(0).getMainWindow().setLocation(0, 0);
+            this.fenetreApp.get(0).getMainWindow().setSize(new Dimension(largeurEcran / 2, hauteurEcran));
+            this.fenetreApp.get(0).mainWindow.requestFocus();
+            this.fenetreApp.get(1).getMainWindow().setLocation(largeurEcran / 2, 0);
+            this.fenetreApp.get(1).getMainWindow().setSize(new Dimension(largeurEcran / 2, hauteurEcran));
+            this.fenetreApp.get(1).getMainWindow().requestFocus();
+        }
+    }
+
+    /**
+     * Remplace la fenêtre choisi par le nouveau document PDF
+     * @param fenetreApp la nouvelle fenetre
+     * @param index l'index de la fenetre à remplacer
+     */
+    public void remplacerFenetre(FenetreApp fenetreApp, int index) {
+        // On enregistre l'environnement grpahique
+        GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        // pour obtenir la taille totale de l'écran
+        Rectangle maximumWindowBounds = graphicsEnvironment.getMaximumWindowBounds();
+
+        int largeurEcran = maximumWindowBounds.width;
+        int hauteurEcran = maximumWindowBounds.height;
+
+        this.fenetreApp.get(index).mainWindow.dispose();
+        this.fenetreApp.set(index, fenetreApp);
+        this.fenetreApp.get(index).mainWindow.setVisible(true);
+        this.fenetreApp.get(index).mainWindow.requestFocus();
+        this.fenetreApp.get(0).mainWindow.setLocation(0, 0);
+        this.fenetreApp.get(0).mainWindow.setSize(largeurEcran / 2, hauteurEcran);
+        this.fenetreApp.get(1).mainWindow.setLocation(largeurEcran / 2, 0);
+        this.fenetreApp.get(1).mainWindow.setSize(largeurEcran / 2, hauteurEcran);
+    }
+
+    /**
+     * Détermine si l'application est en mode unifié ou non
+     * @return true si en mode unifié, false sinon
+     */
+    public boolean isUnified() {
+        return unified;
     }
 
     /**
@@ -74,11 +144,42 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
         /* Si le focus est sur le choix de page alors on appelle la méthode qui gère
          * les actions du choix de page gestionChoixPage(int)..
          */
-        if (buttonPanel.choixPage.hasFocus()) {
-            gestionChoixPage(code);
+
+
+        if (fenetreApp.size() >= 1 && fenetreApp.get(0).getButton().choixPage.hasFocus()) {
+            gestionChoixPage(code, fenetreApp.get(0));
+        } else if (fenetreApp.size() >= 2 && fenetreApp.get(1).getButton().choixPage.hasFocus()) {
+            gestionChoixPage(code, fenetreApp.get(1));
         /* ..Sinon on détermine l'action à effectuer en fonction de la touche pressée */
         } else {
             switch (code) {
+                // Si c'est la touche U..
+                case (KeyEvent.VK_U) :
+                    // On passe en mode unifié (ou différencié si deja unifié) si il y a 2 fenêtre
+                    if (fenetreApp.size() == 2) {
+                        unified = !unified;
+                    }
+                    break;
+                // Si c'est la touche D..
+                case (KeyEvent.VK_D) :
+                    // ..Alors on passe à la page suivante de la fenetre 2
+                    fenetreApp.get(1).getContainer().pageSuivante();
+                    break;
+                // Si c'est la touche Q
+                case (KeyEvent.VK_Q):
+                    // ..Alors on passe à la page précédente de la fenetre 2
+                    fenetreApp.get(1).getContainer().pagePrecedente();
+                    break;
+                // Si c'est la touche Z
+                case (KeyEvent.VK_Z) :
+                    // ..Alors on monte dans le document de la fenetre 2
+                    fenetreApp.get(1).getContainer().monter();
+                    break;
+                // Si c'est la touche S
+                case (KeyEvent.VK_S):
+                    // ..Alors on descend dans le document de la fenetre 2
+                    fenetreApp.get(1).getContainer().descendre();
+                    break;
                 // Si c'est la flèche de droite..
                 case (KeyEvent.VK_RIGHT):
                     // ..Alors on passe à la page suivante
@@ -101,113 +202,192 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
                     break;
                 // Si c'est la touche "R"..
                 case (KeyEvent.VK_R):
-                    // ..Alors on sélectionne le champ de choix de page
+                    // ..Alors on sélectionne le champ de choix de page de la fenetre 1
                     // Et on pré-sélectionne le texte qui y est
-                    buttonPanel.choixPage.requestFocus();
-                    buttonPanel.choixPage.selectAll();
+                    choixPage(0);
                     break;
-                // Si c'est la touche "A"..
-                case (KeyEvent.VK_A) :
-                    // ..On zoom ou dézoom
+                // Si c'est la touche T
+                case (KeyEvent.VK_T):
+                    // ..Alors on sélectionne le champ de choix de page de la fenetre 2
+                    // Et on pré-sélectionne le texte qui y est
+                    choixPage(1);
+                    break;
+                // Si c'est la touche "1"..
+                case (KeyEvent.VK_1) :
+                    // ..On zoom ou dézoom la fenetre 1
                     zoom();
                     break;
+                // Si c'est la touche 2
+                case (KeyEvent.VK_2) :
+                    // ..On zoom ou dézoom la fenetre 2
+                    fenetreApp.get(1).getContainer().zoom();
+                    break;
+
             }
         }
     }
-
     /**
      * Si le champ de numéro de page est selectionné alors
      * si l'utilisateur presse "Echap" alors on transmet le focus à la fenetre
      * si l'utilisateur presse "Entrée", on affiche la page entrée (si il s'agit d'un entier compris
      * entre 1 et le nombre de page
      */
-    private void gestionChoixPage(int code) {
+    public void gestionChoixPage(int code, FenetreApp fenetre) {
         switch (code) {
             /*
              * Si l'utilisateur à pressé "Echap" alors on retourne le focus
              * sur la fenêtre
              */
             case (KeyEvent.VK_ESCAPE):
-                fenetreApp.mainWindow.requestFocus();
+                fenetre.mainWindow.requestFocus();
                 break;
             /*
              * Si l'utilisateur à pressé "Entrée" alors on va à la page indiquée dans le champ
              * de choix de page sous réserve que c'est un entier compris entre 1 et le nombre maximum de page
              */
             case (KeyEvent.VK_ENTER):
-                if (buttonPanel.choixPage.hasFocus()) {
-                    fenetreApp.mainWindow.requestFocus();
+                if (fenetre.getButton().choixPage.hasFocus()) {
+                    fenetre.mainWindow.requestFocus();
                     try {
-                        if (Integer.parseInt(fenetreApp.getButton().choixPage.getText()) <= fenetreApp.getContainer().getNombrePage()
-                                && Integer.parseInt(fenetreApp.getButton().choixPage.getText()) > 0) {
-                            goTo(Integer.parseInt(fenetreApp.getButton().choixPage.getText()));
+                        if (!unified && Integer.parseInt(fenetre.getButton().choixPage.getText()) <= fenetre.getContainer().getNombrePage()) {
+                                fenetre.getContainer().goTo(Integer.parseInt(fenetre.getButton().choixPage.getText()));
+                        } else if (unified && Integer.parseInt(fenetre.getButton().choixPage.getText())
+                                <= Math.max(this.fenetreApp.get(0).getContainer().getNombrePage(), this.fenetreApp.get(1).getContainer().getNombrePage())) {
+                                goTo(Integer.parseInt(fenetre.getButton().choixPage.getText()));
                         } else {
                             throw new NumberFormatException();
                         }
                     } catch (NumberFormatException e1) {
-                        JOptionPane.showMessageDialog(null,"Veuillez entre un entier positif compris entre 1 et "
-                        + containerPDF.nombrePage);
+                        if (unified && fenetreApp.size() > 1) {
+                            JOptionPane.showMessageDialog(null, "Veuillez entre un entier positif compris entre 1 et "
+                                    + Math.max(fenetreApp.get(0).getContainer().nombrePage, fenetreApp.get(1).getContainer().nombrePage));
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Veuillez entre un entier positif compris entre 1 et "
+                                    + fenetre.getContainer().nombrePage);
+                        }
                     }
                 }
                 break;
         }
+
     }
 
 
     /**
-     * Méthode qui renvoie directement à la page demandée
-     * @param page le numéro de la page à afficher
+     * Renvoie à la page "page"
+     * Si unifié, les 2 documents vont affiché le min entre "page" et le nombre max de page
+     * @param page la page à affiché
      */
-    public void goTo(int page) {
-            /* Positionne le curseur de la scrollbar au niveau de la page demandée*/
-            containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(
-                    (int)((double)(page-1)/(double)containerPDF.getPages().size()* containerPDF.heightTotal)
-            + containerPDF.getDimensionEspace().height);
-            /* Actualise le compteur de page */
-            fenetreApp.getButton().c.setValue(page);
-            fenetreApp.getButton().choixPage.setText(String.valueOf(fenetreApp.getButton().c.getValue()));
-            /* On met pageActuelle à -10 pour que ce soit différent de la valeur de c et que la méthode updatePDF()
-             * affiche les nouvelles pages  */
-            containerPDF.setPageActuelle(-10);
-            containerPDF.updatePDF();
+    private void goTo(int page) {
+        if (unified) {
+            fenetreApp.get(0).getContainer().goTo(page);
+            fenetreApp.get(1).getContainer().goTo(page);
+        } else {
+            fenetreApp.get(0).getContainer().goTo(page);
+        }
 
     }
 
-
     /**
-     * Méthode de zoom du pdf
-     * Change le statut "zoomé" du pdf et change le boolean updateScrollBar pour que le thread
-     * qui actualise puisse retourner sur la même page.
+     * Sélection du champ graphique de choix de page
+     * @param index l'index de la fenêtre où l'on sélectionne (focus) ce champ
      */
-    public void zoom() {
-        containerPDF.zoomed = !containerPDF.zoomed;
-        containerPDF.setPageActuelle(-10);
-        containerPDF.updatePDF();
-        containerPDF.updateScrollBar = true;
-
+    private void choixPage(int index) {
+        fenetreApp.get(index).getButton().choixPage.requestFocus();
+        fenetreApp.get(index).getButton().choixPage.selectAll();
 
     }
 
     /**
-     * Méthode qui envoie à la page précédente
+     * Zoom (dézoom) le document
+     * Si unifié, les 2 documents vont être zoomé (dézoomé)
+     */
+    private void zoom() {
+        if (unified) {
+            fenetreApp.get(0).getContainer().zoom();
+            fenetreApp.get(1).getContainer().zoom();
+        } else {
+            fenetreApp.get(0).getContainer().zoom();
+        }
+    }
+
+    /**
+     * Renvoie à la page précédente
+     * Si unifié, les 2 documents vont affiché la page précédente
      */
     public void pagePrecedente() {
-        if (fenetreApp.getButton().c.getValue() - 1 > 0) {
-            fenetreApp.getButton().c.decrease();
-            goTo(fenetreApp.getButton().c.getValue());
+        if (unified) {
+            fenetreApp.get(0).getContainer().pagePrecedente();
+            fenetreApp.get(1).getContainer().pagePrecedente();
+        } else {
+            fenetreApp.get(0).getContainer().pagePrecedente();
         }
     }
 
     /**
-     * Méthode qui envoie à la page suivante
+     * Renvoie à la page suivante
+     * Si unifié, les 2 documents vont affiché la page suivante
      */
     public void pageSuivante() {
-        if (fenetreApp.getButton().c.getValue() + 1 <= containerPDF.nombrePage) {
-            fenetreApp.getButton().c.increment();
-            goTo(fenetreApp.getButton().c.getValue());
+        if (unified) {
+            fenetreApp.get(0).getContainer().pageSuivante();
+            fenetreApp.get(1).getContainer().pageSuivante();
+        } else {
+            fenetreApp.get(0).getContainer().pageSuivante();
         }
     }
 
+    /**
+     * Renvoie à la page précedente des 2 documents si unifié
+     * Sinon renvoie à la page précédente de la fenêtre passé en paramètre
+     * @param fenetreAppSeule la fenêtre où l'on souhaite afficher la page précédente
+     */
+    public void pagePrecedente(FenetreApp fenetreAppSeule) {
+        if (unified) {
+            fenetreApp.get(0).getContainer().pagePrecedente();
+            fenetreApp.get(1).getContainer().pagePrecedente();
+        } else {
+            fenetreAppSeule.getContainer().pagePrecedente();
+        }
+    }
+
+    /**
+     * Renvoie à la page suivante des 2 documents si unifié
+     * Sinon renvoie à la page suivante de la fenêtre passé en paramètre
+     * @param fenetreAppSeule la fenêtre où l'on souhaite afficher la page suivante
+     */
+    public void pageSuivante(FenetreApp fenetreAppSeule) {
+        if (unified) {
+            fenetreApp.get(0).getContainer().pageSuivante();
+            fenetreApp.get(1).getContainer().pageSuivante();
+        } else {
+            fenetreAppSeule.getContainer().pageSuivante();
+        }
+    }
+
+    /**
+     * Scroll vers le bas du document, des 2 si mode unifié
+     */
+    private void descendre() {
+        if (unified) {
+            fenetreApp.get(0).getContainer().descendre();
+            fenetreApp.get(1).getContainer().descendre();
+        } else {
+            fenetreApp.get(0).getContainer().descendre();
+        }
+    }
+
+    /**
+     * Scroll vers le haut du document, des 2 si mode unifié
+     */
+    private void monter() {
+        if (unified) {
+            fenetreApp.get(0).getContainer().monter();
+            fenetreApp.get(1).getContainer().monter();
+        } else {
+            fenetreApp.get(0).getContainer().monter();
+        }
+    }
 
     /**
      * Invoked when a key has been released.
@@ -231,37 +411,30 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
         /* Détermine la valeur du scroll */
         double notches = e.getPreciseWheelRotation();
         if (notches < 0) {
-            monter();
+            if (unified) {
+                fenetreApp.get(0).getContainer().monter();
+                fenetreApp.get(1).getContainer().monter();
+            } else if (fenetreApp.get(0).mainWindow.isFocused()) {
+                fenetreApp.get(0).getContainer().monter();
+            } else if (fenetreApp.get(1).mainWindow.isFocused()) {
+                fenetreApp.get(1).getContainer().monter();
+            }
+
         } else {
-            descendre();
+            if (unified) {
+                fenetreApp.get(0).getContainer().descendre();
+                fenetreApp.get(1).getContainer().descendre();
+            } else if (fenetreApp.get(0).mainWindow.isFocused()) {
+                fenetreApp.get(0).getContainer().descendre();
+            } else if (fenetreApp.get(1).mainWindow.isFocused()) {
+                fenetreApp.get(1).getContainer().descendre();
+            }
+
+
         }
     }
 
 
-    /**
-     * Descend la scrollbar de 1 unité (100px)
-     * Puis actualise l'affiche du pdf et la page courante si besoin
-     */
-    private void descendre() {
-
-        containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(
-                containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue() + 100);
-        containerPDF.updatePDF();
-        containerPDF.updatePageCourante();
-
-    }
-
-    /**
-     * Monte la scrollbar de 1 unité (100px)
-     * Puis actualise l'affiche du pdf et la page courante si besoin
-     */
-    private void monter() {
-
-        containerPDF.scrollPaneContainer.getVerticalScrollBar().setValue(
-                containerPDF.scrollPaneContainer.getVerticalScrollBar().getValue() - 100);
-        containerPDF.updatePDF();
-        containerPDF.updatePageCourante();
-    }
 
 
 
@@ -281,8 +454,12 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      */
     @Override
     public void mouseDragged(MouseEvent e) {
+        fenetreApp.get(0).getContainer().updatePageCourante();
+        if (fenetreApp.size() == 2) {
+            fenetreApp.get(1).getContainer().updatePageCourante();
+        }
 
-        containerPDF.updatePageCourante();
+
     }
 
     /**
@@ -308,6 +485,12 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
         containerPDF.updatePageCourante();
         buttonPanel.choixPage.setText(String.valueOf(1 + buttonPanel.c.getValue()));
         containerPDF.updatePDF();
+        if (fenetreApp.size()==2) {
+            fenetreApp.get(1).getContainer().updatePageCourante();
+            fenetreApp.get(1).getButton().choixPage.setText(String.valueOf(1 + buttonPanel.c.getValue()));
+            fenetreApp.get(1).getContainer().updatePDF();
+        }
+
     }
 
     /**
@@ -317,9 +500,13 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      */
     @Override
     public void mousePressed(MouseEvent e) {
+        getFenetreApp().get(0).getContainer().updatePageCourante();
+        if (fenetreApp.size()==2) {
+            fenetreApp.get(1).getContainer().updatePageCourante();
+            fenetreApp.get(1).getContainer().updatePDF();
+        }
+        getFenetreApp().get(0).getContainer().updatePDF();
 
-        containerPDF.updatePageCourante();
-        containerPDF.updatePDF();
     }
 
     /**
@@ -329,8 +516,12 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      */
     @Override
     public void mouseReleased(MouseEvent e) {
-        containerPDF.updatePageCourante();
-        containerPDF.updatePDF();
+        getFenetreApp().get(0).getContainer().updatePageCourante();
+        if (fenetreApp.size()==2) {
+            fenetreApp.get(1).getContainer().updatePageCourante();
+            fenetreApp.get(1).getContainer().updatePDF();
+        }
+        getFenetreApp().get(0).getContainer().updatePDF();
     }
 
     /**
@@ -341,6 +532,9 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
     @Override
     public void mouseEntered(MouseEvent e) {
         containerPDF.updatePageCourante();
+        if (fenetreApp.size()==2) {
+            fenetreApp.get(1).getContainer().updatePageCourante();
+        }
     }
 
     /**
@@ -351,6 +545,9 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
     @Override
     public void mouseExited(MouseEvent e) {
         containerPDF.updatePageCourante();
+        if (fenetreApp.size()==2) {
+            fenetreApp.get(1).getContainer().updatePageCourante();
+        }
     }
 
     /**

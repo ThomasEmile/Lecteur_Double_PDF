@@ -6,14 +6,17 @@
  * ----------------------------------------------------------------------------------------
  */
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 
-public class ButtonPanel {
+public class Menu {
 
-    public int tailleEspace = 22;
     private JPanel containerButton;
     public ContainerPDF containerPDF;
     private JButton pageSuivante;
@@ -22,14 +25,24 @@ public class ButtonPanel {
     public JLabel nombreDePage;
     private FenetreApp fenetre;
 
+    // création de la MenuBar afin d'implémenter les fonctionnalités : ouvrir, fermer et réduire un document pdf
+    private JMenuBar menuBarMainWindow;
+    private JMenu menuMainWindow;
+    private JMenuItem ouvrir;
+    private JMenuItem quitter;
+
     // déclaration de deux objets Counter
     public Counter c = new Counter();
     
     
-    public ButtonPanel(FenetreApp fenetre) {
+    public Menu(FenetreApp fenetre) {
         c.setValue(1);
         this.fenetre = fenetre;
         this.containerPDF = fenetre.container;
+        menuBarMainWindow = new JMenuBar();
+        menuMainWindow = new JMenu("Fichier");
+        ouvrir = new JMenuItem("Ouvrir");
+        quitter = new JMenuItem("Quitter l'application");
         containerButton = new JPanel();
         Dimension dimension = new Dimension(1920, 60);
         containerButton.setMaximumSize(dimension);
@@ -64,33 +77,40 @@ public class ButtonPanel {
         // évènement page suivante
         pageSuivante.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (fenetre.getButton().c.getValue() + 1 <= fenetre.container.nombrePage) {
-                    fenetre.getButton().c.increment();
-                    fenetre.clavierSouris.goTo(fenetre.getButton().c.getValue());
-                }
+                fenetre.clavierSouris.pageSuivante(fenetre);
             }
         });
 
         // évènement page precedente
         pagePrecedente.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (fenetre.getButton().c.getValue() - 1 > 0) {
-                    fenetre.getButton().c.decrease();
-                    fenetre.clavierSouris.goTo(fenetre.getButton().c.getValue());
-                }
+                fenetre.clavierSouris.pagePrecedente(fenetre);
 
             }
         });
 
-        // évènement affiche la page entrée par l'utilisateur
-        choixPage.addActionListener(new ActionListener() {
+        // évènement qui ouvre un nouveau document pdf
+        ouvrir.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
+                GestionFenetre.nouvelleFenetre();
             }
         });
+
+        // évènement qui quitte l'application
+        quitter.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(1);
+            }
+        });
+
     }
 
     void ajoutComposants() {
+        fenetre.getMainWindow().setJMenuBar(menuBarMainWindow);
+        menuMainWindow.add(ouvrir);
+        menuMainWindow.add(quitter);
+        menuBarMainWindow.add(menuMainWindow);
         containerButton.add(pageSuivante);
         containerButton.add(pagePrecedente);
         containerButton.add(choixPage);

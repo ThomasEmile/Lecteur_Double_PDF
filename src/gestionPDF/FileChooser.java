@@ -26,6 +26,7 @@ public class FileChooser {
 		chooser.setDialogTitle("Selectionner un pdf");
 
 		chooser.setAcceptAllFileFilterUsed(false);
+
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF file", "pdf");
 		chooser.addChoosableFileFilter(filter);
 

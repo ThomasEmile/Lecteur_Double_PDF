@@ -11,14 +11,20 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+
+
 
 /**
  * Classe qui gère l'affichage du pdf
  */
 public class ContainerPDF {
+
+    /** Document pdf du containerPDF */
+    private PDDocument document;
 
     /** True si le pdf est zoomé, false sinon */
     public boolean zoomed = false;
@@ -86,6 +92,7 @@ public class ContainerPDF {
      * @param document lien vers le pdf à affiché
      */
     private void initComponent(FenetreApp fenetre, PDDocument document) {
+        this.document= document;
         dimensionDeBase = new ArrayList<>();
         espaces = new ArrayList<>();
         pages = new ArrayList<>();
@@ -93,6 +100,7 @@ public class ContainerPDF {
         containerDocumentPDF.setBackground(Color.darkGray);
         scrollPaneContainer = new JScrollPane(containerDocumentPDF);
         scrollPaneContainer.setBackground(Color.darkGray);
+        scrollPaneContainer.setWheelScrollingEnabled(false);
         documentPDF = new JPanel();
         documentPDF.setBackground(Color.DARK_GRAY);
         this.fenetre = fenetre;
@@ -181,7 +189,7 @@ public class ContainerPDF {
                 dimensionDeBase.add(new Dimension(img.getWidth(), img.getHeight()));
                 setDimensions(i, unBlanc, unEspace);
                 documentPDF.add(unEspace);
-                /* On affiche les 5 images avant la n°i et les 5 après, le reste du documents reste des
+                /* On affiche les 5 images avant la n°c et les 5 après, le reste du documents reste des
                  * pages blanches
                  */
                 if (i <= fenetre.getButton().c.getValue() + 5 && i >= fenetre.getButton().c.getValue() - 5) {
@@ -245,7 +253,7 @@ public class ContainerPDF {
                      */
                     pages.get(i).dimension(ratio, img);
 
-                    /* On affiche les 5 images avant la n°i et les 5 après, le reste du documents reste des
+                    /* On affiche les 5 images avant la n°c et les 5 après, le reste du documents reste des
                      * pages blanches
                      */
                     if (i < fenetre.getButton().c.getValue() + 5 && i > fenetre.getButton().c.getValue() - 5) {
@@ -303,6 +311,82 @@ public class ContainerPDF {
         fenetre.getButton().c.setValue(pageActuelle);
     }
 
+    /**
+     * Méthode qui renvoie directement à la page demandée
+     * @param page le numéro de la page à afficher
+     */
+    public void goTo(int page) {
+        /* Positionne le curseur de la scrollbar au niveau de la page demandée*/
+        scrollPaneContainer.getVerticalScrollBar().setValue(
+                (int)((double)(page-1)/(double)getPages().size()* heightTotal)
+                        + getDimensionEspace().height);
+        /* Actualise le compteur de page */
+        fenetre.getButton().c.setValue(Math.min(fenetre.getContainer().nombrePage, page));
+        fenetre.getButton().choixPage.setText(String.valueOf(Math.min(fenetre.getContainer().nombrePage, page)));
+        /* On met pageActuelle à -10 pour que ce soit différent de la valeur de c et que la méthode updatePDF()
+         * affiche les nouvelles pages  */
+        setPageActuelle(-10);
+        updatePDF();
+
+    }
+
+    /**
+     * Méthode de zoom du pdf
+     * Change le statut "zoomé" du pdf et change le boolean updateScrollBar pour que le thread
+     * qui actualise puisse retourner sur la même page.
+     */
+    public void zoom() {
+        zoomed = !zoomed;
+        setPageActuelle(-10);
+        updatePDF();
+        updateScrollBar = true;
+    }
+    /**
+     * Méthode qui envoie à la page précédente
+     */
+    public void pagePrecedente() {
+        if (fenetre.getButton().c.getValue() - 1 > 0) {
+            fenetre.getButton().c.decrease();
+            goTo(fenetre.getButton().c.getValue());
+        }
+    }
+
+    /**
+     * Méthode qui envoie à la page suivante
+     */
+    public void pageSuivante() {
+        if (fenetre.getButton().c.getValue() + 1 <= nombrePage) {
+            fenetre.getButton().c.increment();
+            goTo(fenetre.getButton().c.getValue());
+        }
+    }
+
+
+
+    /**
+     * Descend la scrollbar de 1 unité (100px)
+     * Puis actualise l'affiche du pdf et la page courante si besoin
+     */
+    public void descendre() {
+
+        scrollPaneContainer.getVerticalScrollBar().setValue(
+                scrollPaneContainer.getVerticalScrollBar().getValue() + 100);
+        updatePDF();
+        updatePageCourante();
+
+    }
+
+    /**
+     * Monte la scrollbar de 1 unité (100px)
+     * Puis actualise l'affiche du pdf et la page courante si besoin
+     */
+    public void monter() {
+
+        scrollPaneContainer.getVerticalScrollBar().setValue(
+                scrollPaneContainer.getVerticalScrollBar().getValue() - 100);
+        updatePDF();
+        updatePageCourante();
+    }
 
 }
 
