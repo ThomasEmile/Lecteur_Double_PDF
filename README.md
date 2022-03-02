@@ -12,11 +12,11 @@
 ### Repository Git contenant le projet tutoré pour l'année 2021-2022 portant sur le sujet d'un lecteur double PDF
 
 ## Membres de l'équipe : 
-### Yann MOTTOLA, développeur
-### Eva SIMON, scrum master
-### Steven LAVILLE, product owner
-### Thomas EMILE, développeur
-### Pierre LESTRINGUEZ, développeur
+### Yann MOTTOLA, seulement au S3
+### Eva SIMON
+### Steven LAVILLE
+### Thomas EMILE
+### Pierre LESTRINGUEZ
 
 # lien ZenHub : 
 ### https://github.com/ThomasEmile/Lecteur_Double_PDF#workspaces/lecteur-double-pdf-616d97d10ad086001204466b/board?repos=418567905
