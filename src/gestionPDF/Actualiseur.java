@@ -1,12 +1,10 @@
 /*-----------------------------------------------------------------------------------------
  *                                                                                        *
  *  IUT de RODEZ département informatique - Projet tutoré PDF double affichage            *
- *  Groupe : Eva SIMON, Thomas EMILE, Steavn LAVILLE, Yann MOTTOLA, Pierre LESTRINGUEZ    *
+ *  Groupe : Eva SIMON, Thomas EMILE, Steven LAVILLE, Yann MOTTOLA, Pierre LESTRINGUEZ    *
  *                                                                                        *
  * ----------------------------------------------------------------------------------------
  */
-
-import javax.swing.*;
 
 /**
  * Classe d'actualisation (continue) du pdf

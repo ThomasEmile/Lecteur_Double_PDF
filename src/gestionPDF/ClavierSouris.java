@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------------------------------------
  *                                                                                        *
  *  IUT de RODEZ département informatique - Projet tutoré PDF double affichage            *
- *  Groupe : Eva SIMON, Thomas EMILE, Steavn LAVILLE, Yann MOTTOLA, Pierre LESTRINGUEZ    *
+ *  Groupe : Eva SIMON, Thomas EMILE, Steven LAVILLE, Yann MOTTOLA, Pierre LESTRINGUEZ    *
  *                                                                                        *
  * ----------------------------------------------------------------------------------------
  */
@@ -13,7 +13,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
- * Méthode de gestion de tout les événements clavier et souris
+ * Méthode de gestion de tous les événements clavier et souris
  */
 public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMotionListener, MouseListener, ComponentListener {
 
@@ -86,12 +86,12 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
     }
 
     /**
-     * Remplace la fenêtre choisi par le nouveau document PDF
+     * Remplace la fenêtre choisie par le nouveau document PDF
      * @param fenetreApp la nouvelle fenetre
      * @param index l'index de la fenetre à remplacer
      */
     public void remplacerFenetre(FenetreApp fenetreApp, int index) {
-        // On enregistre l'environnement grpahique
+        // On enregistre l'environnement graphique
         GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
         // pour obtenir la taille totale de l'écran
         Rectangle maximumWindowBounds = graphicsEnvironment.getMaximumWindowBounds();
@@ -138,7 +138,7 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      */
     @Override
     public void keyPressed(KeyEvent e) {
-        // Détermine le code de la touche qui à été pressée
+        // Détermine le code de la touche qui a été pressée
         int code = e.getKeyCode();
 
         /* Si le focus est sur le choix de page alors on appelle la méthode qui gère
@@ -155,29 +155,29 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
             switch (code) {
                 // Si c'est la touche U..
                 case (KeyEvent.VK_U) :
-                    // On passe en mode unifié (ou différencié si deja unifié) si il y a 2 fenêtre
+                    // On passe en mode unifié (ou différencié si deja unifié) s'il y a 2 fenêtre
                     if (fenetreApp.size() == 2) {
                         unified = !unified;
                     }
                     break;
                 // Si c'est la touche D..
                 case (KeyEvent.VK_D) :
-                    // ..Alors on passe à la page suivante de la fenetre 2
+                    // ..Alors on passe à la page suivante de la fenêtre 2
                     fenetreApp.get(1).getContainer().pageSuivante();
                     break;
                 // Si c'est la touche Q
                 case (KeyEvent.VK_Q):
-                    // ..Alors on passe à la page précédente de la fenetre 2
+                    // ..Alors on passe à la page précédente de la fenêtre 2
                     fenetreApp.get(1).getContainer().pagePrecedente();
                     break;
                 // Si c'est la touche Z
                 case (KeyEvent.VK_Z) :
-                    // ..Alors on monte dans le document de la fenetre 2
+                    // ..Alors on monte dans le document de la fenêtre 2
                     fenetreApp.get(1).getContainer().monter();
                     break;
                 // Si c'est la touche S
                 case (KeyEvent.VK_S):
-                    // ..Alors on descend dans le document de la fenetre 2
+                    // ..Alors on descend dans le document de la fenêtre 2
                     fenetreApp.get(1).getContainer().descendre();
                     break;
                 // Si c'est la flèche de droite..
@@ -197,29 +197,29 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
                     break;
                 // Si c'est la flèche du haut..
                 case (KeyEvent.VK_UP):
-                    // ..Alors on scroll vers le haut
+                    // .. Alors on scroll vers le haut
                     monter();
                     break;
                 // Si c'est la touche "R"..
                 case (KeyEvent.VK_R):
-                    // ..Alors on sélectionne le champ de choix de page de la fenetre 1
-                    // Et on pré-sélectionne le texte qui y est
+                    // .. Alors on sélectionne le champ de choix de page de la fenêtre 1
+                    // Et on présélectionne le texte qui y est
                     choixPage(0);
                     break;
                 // Si c'est la touche T
                 case (KeyEvent.VK_T):
-                    // ..Alors on sélectionne le champ de choix de page de la fenetre 2
-                    // Et on pré-sélectionne le texte qui y est
+                    // .. Alors on sélectionne le champ de choix de page de la fenêtre 2
+                    // Et on présélectionne le texte qui y est
                     choixPage(1);
                     break;
                 // Si c'est la touche "1"..
                 case (KeyEvent.VK_1) :
-                    // ..On zoom ou dézoom la fenetre 1
+                    // ..On zoom ou dézoome la fenêtre 1
                     zoom();
                     break;
                 // Si c'est la touche 2
                 case (KeyEvent.VK_2) :
-                    // ..On zoom ou dézoom la fenetre 2
+                    // ..On zoom ou dézoome la fenêtre 2
                     fenetreApp.get(1).getContainer().zoom();
                     break;
 
