@@ -29,6 +29,9 @@ public class ContainerPDF {
     /** True si le pdf est zoomé, false sinon */
     public boolean zoomed = false;
 
+    /** True si le pdf est zoomé pleine page, false sinon */
+    private boolean pleinePage = false;
+
     /** True si le pdf doit être redimensionner, false sinon */
     public boolean redimensionner = true;
 
@@ -73,6 +76,9 @@ public class ContainerPDF {
 
     /** ratio de zoom/dezoom */
     double ratio = 1;
+
+
+
 
     /**
      * Constructeur de la classe ContainerPDF
@@ -183,6 +189,8 @@ public class ContainerPDF {
             /* Transforme la page 0 du document en BufferedImage */
             BufferedImage img = pdfRenderer.renderImageWithDPI(0, 100);
             for (int i = 0; i < nombrePage; i++) {
+
+
                 PanelImage unBlanc = new PanelImage();
                 JPanel unEspace = new JPanel();
 
@@ -193,8 +201,8 @@ public class ContainerPDF {
                  * pages blanches
                  */
                 if (i <= fenetre.getButton().c.getValue() + 5 && i >= fenetre.getButton().c.getValue() - 5) {
-                    /* Transformation de la page du pdf n°i en une BufferedImage */
                     BufferedImage img1 = pdfRenderer.renderImageWithDPI(i, 100);
+                    dimensionDeBase.set(i, new Dimension(img1.getWidth(), img1.getHeight()));
                     /* Création du panel contenant l'image i */
                     PanelImage panelImage = new PanelImage(img1, img1.getWidth(), img1.getHeight());
                     /* Ajout du panel contenant l'image de la page i au total des pages */
@@ -203,13 +211,12 @@ public class ContainerPDF {
                     documentPDF.add(panelImage);
                     /* Painte de l'image */
                     panelImage.paint(panelImage.getGraphics());
-
                 } else {
                     /*
                      * Si on ne se trouve pas dans les 5 pages avant ou après la page affichée alors on
                      * laisse des panels blanc aux tailles des pages pdf
                      */
-                    unBlanc.setTaille(img.getWidth(), img.getHeight());
+                    unBlanc.setTaille(dimensionDeBase.get(i).width, dimensionDeBase.get(i).height);
                     pages.add(i, unBlanc);
                     documentPDF.add(unBlanc);
                     pages.get(i).paint(unBlanc.getGraphics());
@@ -238,33 +245,28 @@ public class ContainerPDF {
             try {
                 /* Transforme la page 0 du document en BufferedImage */
                 BufferedImage img = pdfRenderer.renderImageWithDPI(0, 100);
-                /* On détermine le ration de zoom (1 si pas zoomé) */
-                ratio = zoomed ?
-                        (double) (fenetre.mainWindow.getWidth()) / (double) img.getWidth()
-                        : 1;
 
                 for (int i = 0; i < nombrePage; i++) {
-                    /* Redéfini les dimension de base des pages */
-                    dimensionDeBase.set(i, new Dimension(fenetre.mainWindow.getWidth(),
-                        (int) (img.getHeight() * ratio)));
+
+                    /* On détermine le ration de zoom (1 si pas zoomé) */
+                    defRatio(i);
 
                     /* Change la taille du panel contenant l'image en multipliant ses dimensions par
                      * le ratio
                      */
-                    pages.get(i).dimension(ratio, img);
-
+                    pages.get(i).dimension(ratio, dimensionDeBase.get(i));
                     /* On affiche les 5 images avant la n°c et les 5 après, le reste du documents reste des
                      * pages blanches
                      */
                     if (i < fenetre.getButton().c.getValue() + 5 && i > fenetre.getButton().c.getValue() - 5) {
                         /* Si il y avait déjà une image, on la redimensionne.. */
                         if (pages.get(i).image != null) {
-                            pages.get(i).setTaille((int) (img.getWidth() * ratio), (int) (img.getHeight() * ratio));
+                            pages.get(i).setTaille((int)(dimensionDeBase.get(i).width * ratio), (int)(dimensionDeBase.get(i).height * ratio));
                             pages.get(i).paint(pages.get(i).getGraphics());
                         } else {
                             /* ..Sinon on charge l'image et on l'affiche au bonne dimension */
                             pages.get(i).setImage(pdfRenderer.renderImageWithDPI(i, 100));
-                            pages.get(i).setTaille((int) (img.getWidth() * ratio), (int) (img.getHeight() * ratio));
+                            pages.get(i).setTaille((int)(dimensionDeBase.get(i).width * ratio), (int)(dimensionDeBase.get(i).height * ratio));
                             pages.get(i).paint(pages.get(i).getGraphics());
                         }
                     /*
@@ -272,7 +274,7 @@ public class ContainerPDF {
                     * laisse des panels blanc aux tailles des pages pdf
                     */
                     } else {
-                        pages.get(i).setTaille((int) (img.getWidth() * ratio), (int) (img.getHeight() * ratio));
+                        pages.get(i).setTaille((int) (dimensionDeBase.get(i).width * ratio), (int) (dimensionDeBase.get(i).height * ratio));
                         pages.get(i).paint(pages.get(i).getGraphics());
                     }
                     /* Actualisation de la hauteur totale du documentPDF*/
@@ -284,6 +286,17 @@ public class ContainerPDF {
         }
         /* Actualise visuellement le documentPDF */
         documentPDF.updateUI();
+    }
+
+    private void defRatio(int i) {
+        if (zoomed) {
+            ratio = (double) (fenetre.mainWindow.getWidth()) / (double) dimensionDeBase.get(i).width;
+        } else if (pleinePage) {
+            ratio = (double) (fenetre.mainWindow.getHeight()) / (double) dimensionDeBase.get(i).height;
+        } else {
+            ratio = 1;
+        }
+
     }
 
     /**
@@ -336,11 +349,26 @@ public class ContainerPDF {
      * qui actualise puisse retourner sur la même page.
      */
     public void zoom() {
+        pleinePage = false;
         zoomed = !zoomed;
         setPageActuelle(-10);
         updatePDF();
         updateScrollBar = true;
     }
+
+    /**
+     * Méthode de zoom du pdf
+     * Change le statut "zoomé" du pdf et change le boolean updateScrollBar pour que le thread
+     * qui actualise puisse retourner sur la même page.
+     */
+    public void zoomPleinePage() {
+        zoomed = false;
+        pleinePage = !pleinePage;
+        setPageActuelle(-10);
+        updatePDF();
+        updateScrollBar = true;
+    }
+
     /**
      * Méthode qui envoie à la page précédente
      */
