@@ -5,7 +5,7 @@
  *                                                                                        *
  * ----------------------------------------------------------------------------------------
  */
-
+package gestionPDF;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import javax.swing.*;
@@ -31,6 +31,18 @@ public class Menu {
     private JMenuItem ouvrir;
     private JMenuItem quitter;
 
+    private JMenu menuMode;
+    private JMenuItem modeUnifier;
+    private JMenuItem modeDifferencier;
+
+    private JMenu menuZoom;
+    private JMenuItem pleinePage;
+    private JMenuItem pleineLargeur;
+    private JMenuItem affichageClassique;
+
+    private JMenu menuAide;
+    private JMenuItem aideRaccourci;
+
     // déclaration de deux objets Counter
     public Counter c = new Counter();
     
@@ -40,9 +52,7 @@ public class Menu {
         this.fenetre = fenetre;
         this.containerPDF = fenetre.container;
         menuBarMainWindow = new JMenuBar();
-        menuMainWindow = new JMenu("Fichier");
-        ouvrir = new JMenuItem("Ouvrir");
-        quitter = new JMenuItem("Quitter l'application");
+        configMenu();
         containerButton = new JPanel();
         Dimension dimension = new Dimension(1920, 60);
         containerButton.setMaximumSize(dimension);
@@ -57,7 +67,73 @@ public class Menu {
         addListeners(fenetre.clavierSouris);
     }
 
+    void configMenu(){
 
+        menuMainWindow = new JMenu("Fichier");
+        ouvrir = new JMenuItem("Ouvrir");
+        quitter = new JMenuItem("Quitter l'application");
+        menuMode = new JMenu("Mode");
+        modeUnifier = new JMenuItem("Mode Unifié");
+        modeDifferencier = new JMenuItem("Mode Différencié");
+        menuZoom = new JMenu("Zoom");
+        affichageClassique = new JMenuItem("Affichage Classique");
+        pleineLargeur = new JMenuItem("Pleine Largeur");
+        pleinePage = new JMenuItem("Pleine Page");
+        menuAide = new JMenu("Aide");
+        aideRaccourci = new JMenuItem("Raccourci");
+
+        menuMainWindow.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        menuZoom.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        menuMode.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        menuAide.setFont(new Font("SansSerif", Font.PLAIN, 16));
+
+        ouvrir .setFont(new Font("SansSerif", Font.PLAIN, 12));
+        quitter.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        modeUnifier.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        modeDifferencier.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        affichageClassique.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        pleineLargeur.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        pleinePage.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        aideRaccourci.setFont(new Font("SansSerif", Font.PLAIN, 12));
+
+        // évènement mode Unifié
+        modeUnifier.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                fenetre.clavierSouris.setUnified(true);
+            }
+        });
+
+        // évènement mode Différencié
+        modeDifferencier.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                fenetre.clavierSouris.setUnified(false);
+            }
+        });
+
+        // évènement pleine Page
+        pleinePage.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //TODO mettre la méthode de pleine page
+            }
+        });
+
+        // évènement pleine Largeur
+        pleineLargeur.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //TODO mettre la méthode de pleine largeur pour le moment cela zoom ou dezoom
+                fenetre.clavierSouris.zoom();
+            }
+        });
+
+        // évènement page classique
+        affichageClassique.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //TODO mettre la méthode de page classique pour le moment cela zoom ou dezoom
+                fenetre.clavierSouris.zoom();
+            }
+        });
+
+    }
 
     void configButton() {
 
@@ -111,6 +187,15 @@ public class Menu {
         menuMainWindow.add(ouvrir);
         menuMainWindow.add(quitter);
         menuBarMainWindow.add(menuMainWindow);
+        menuMode.add(modeUnifier);
+        menuMode.add(modeDifferencier);
+        menuBarMainWindow.add(menuMode);
+        menuZoom.add(affichageClassique);
+        menuZoom.add(pleineLargeur);
+        menuZoom.add(pleinePage);
+        menuBarMainWindow.add(menuZoom);
+        menuAide.add(aideRaccourci);
+        menuBarMainWindow.add(menuAide);
         containerButton.add(pageSuivante);
         containerButton.add(pagePrecedente);
         containerButton.add(choixPage);

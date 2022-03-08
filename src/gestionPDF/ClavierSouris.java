@@ -6,7 +6,7 @@
  * ----------------------------------------------------------------------------------------
  */
 
-
+package gestionPDF;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -115,6 +115,14 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      */
     public boolean isUnified() {
         return unified;
+    }
+
+    /**
+     * Permet de changer le mode unifié en lui donnant une nouvelle valuer
+     * @param nouvelleValeur nouvelle Valeur de unified
+     */
+    public void setUnified(boolean nouvelleValeur) {
+        unified = nouvelleValeur;
     }
 
     /**
@@ -302,7 +310,7 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      * Zoom (dézoom) le document
      * Si unifié, les 2 documents vont être zoomé (dézoomé)
      */
-    private void zoom() {
+    public void zoom() {
         if (unified) {
             fenetreApp.get(0).getContainer().zoom();
             fenetreApp.get(1).getContainer().zoom();

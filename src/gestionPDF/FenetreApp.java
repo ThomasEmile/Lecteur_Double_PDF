@@ -6,6 +6,7 @@
  * ----------------------------------------------------------------------------------------
  */
 
+package gestionPDF;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import javax.swing.*;

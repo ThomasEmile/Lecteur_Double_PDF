@@ -1,9 +1,12 @@
+package gestionPDF;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 
 public class GestionFenetre {
 
