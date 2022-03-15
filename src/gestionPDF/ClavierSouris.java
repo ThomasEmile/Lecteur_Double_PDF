@@ -293,8 +293,8 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
     /**
      * Si le champ de numéro de page est selectionné alors
      * si l'utilisateur presse "Echap" alors on transmet le focus à la fenetre
-     * si l'utilisateur presse "Entrée", on affiche la page entrée (si il s'agit d'un entier compris
-     * entre 1 et le nombre de page
+     * si l'utilisateur presse "Entrée", on affiche la page entrée (s'il s'agit d'un entier compris
+     * entre 1 et le nombre de pages
      */
     public void gestionChoixPage(int code, FenetreApp fenetre) {
         switch (code) {
@@ -339,8 +339,8 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
 
     /**
      * Renvoie à la page "page"
-     * Si unifié, les 2 documents vont affiché le min entre "page" et le nombre max de page
-     * @param page la page à affiché
+     * Si unifié, les 2 documents vont afficher le min entre "page" et le nombre max de page
+     * @param page la page à afficher
      */
     private void goTo(int page) {
         if (unified) {
@@ -377,7 +377,7 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
 
     /**
      * Renvoie à la page précédente
-     * Si unifié, les 2 documents vont affiché la page précédente
+     * Si unifiée, les 2 documents vont afficher la page précédente
      */
     public void pagePrecedente() {
         if (unified) {
@@ -390,7 +390,7 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
 
     /**
      * Renvoie à la page suivante
-     * Si unifié, les 2 documents vont affiché la page suivante
+     * Si unifiée, les 2 documents vont afficher la page suivante
      */
     public void pageSuivante() {
         if (unified) {
@@ -402,8 +402,8 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
     }
 
     /**
-     * Renvoie à la page précedente des 2 documents si unifié
-     * Sinon renvoie à la page précédente de la fenêtre passé en paramètre
+     * Renvoie à la page précedente des 2 documents si unifiés
+     * Sinon renvoie à la page précédente de la fenêtre passée en paramètre
      * @param fenetreAppSeule la fenêtre où l'on souhaite afficher la page précédente
      */
     public void pagePrecedente(FenetreApp fenetreAppSeule) {
@@ -416,8 +416,8 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
     }
 
     /**
-     * Renvoie à la page suivante des 2 documents si unifié
-     * Sinon renvoie à la page suivante de la fenêtre passé en paramètre
+     * Renvoie à la page suivante des 2 documents si unifiés
+     * Sinon renvoie à la page suivante de la fenêtre passée en paramètre
      * @param fenetreAppSeule la fenêtre où l'on souhaite afficher la page suivante
      */
     public void pageSuivante(FenetreApp fenetreAppSeule) {

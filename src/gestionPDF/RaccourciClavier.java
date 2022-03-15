@@ -103,10 +103,10 @@ public class RaccourciClavier {
                     if(ligne != null && !ligne.isEmpty()) {
                         if(i%2==0)
                             fonction = ligne;
+                            if(i > 1)
+                                definirToucheFonction(touche,fonction);
                         else
                             touche = ligne;
-                        if(i > 1 && i%2 == 0)
-                            definirToucheFonction(touche,fonction);
                     }
                     i++;
                 } while(ligne != null);
@@ -126,7 +126,7 @@ public class RaccourciClavier {
             // on teste si la touche et la fonction existent
             getTouche(lblFonction);
             getFonction(lblTouche);
-            // on parcours les associations
+            // on parcourt les associations
             for (String[] associationsTouchesFonction : associationsTouchesFonctions)
             {
                 // on trouve la fonction
@@ -172,14 +172,14 @@ public class RaccourciClavier {
         }
 
 
-        /*/**
+        /**
          * méthode de test
          * @param args non utilisé
          */
          public static void main(String[] args) {
                 RaccourciClavier raccourciClavier = new RaccourciClavier();
                 // Test getFonction
-                System.out.println("Test getFonction");
+                System.out.println("Test getFonction :");
                 try {
                         if((raccourciClavier.getFonction("A")).equals("indéfinie"))
                             System.out.println("A : fonctionne");
