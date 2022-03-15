@@ -154,7 +154,7 @@ public class Menu {
                 affichageClassique.setIcon( iconBlank );
                 pleineLargeur.setIcon(iconBlank);
                 pleinePage.setIcon(iconZoom);
-                //TODO mettre la méthode de pleine page
+                fenetre.clavierSouris.zoomPleinePage();
             }
         });
 
@@ -164,7 +164,6 @@ public class Menu {
                 affichageClassique.setIcon( iconBlank );
                 pleineLargeur.setIcon(iconZoom);
                 pleinePage.setIcon(iconBlank);
-                //TODO mettre la méthode de pleine largeur pour le moment cela zoom ou dezoom
                 fenetre.clavierSouris.zoom();
             }
         });
@@ -175,8 +174,7 @@ public class Menu {
                 affichageClassique.setIcon( iconZoom );
                 pleineLargeur.setIcon(iconBlank);
                 pleinePage.setIcon(iconBlank);
-                //TODO mettre la méthode de page classique pour le moment cela zoom ou dezoom
-                fenetre.clavierSouris.zoom();
+                fenetre.getContainer().zoom();
             }
         });
 

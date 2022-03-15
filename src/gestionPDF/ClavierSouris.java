@@ -256,7 +256,7 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
         }
     }
 
-    private void zoomPleinePage() {
+    public void zoomPleinePage() {
         if (unified) {
             fenetreApp.get(0).getContainer().zoomPleinePage();
             fenetreApp.get(1).getContainer().zoomPleinePage();
