@@ -88,11 +88,12 @@ public class PanelImage extends JPanel  {
      * @param ratio le ration a appliqué sur l'image
      * @param image l'image sur laquelle appliquer le ratio
      */
-    public void dimension(double ratio, Image image) {
-        Dimension d = new Dimension((int)(image.getWidth(null) * ratio) , (int)(image.getHeight(null) * ratio));
+    public void dimension(double ratio, Dimension dimension) {
+        Dimension d = new Dimension((int)(dimension.width * ratio) , (int)(dimension.height * ratio));
         setMaximumSize(d);
         setMinimumSize(d);
         setPreferredSize(d);
     }
+
 }
 

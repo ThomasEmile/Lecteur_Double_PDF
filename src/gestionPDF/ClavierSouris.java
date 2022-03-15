@@ -7,6 +7,7 @@
  */
 
 package gestionPDF;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -238,7 +239,12 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
                 // Si c'est la touche "1"..
                 case (KeyEvent.VK_1) :
                     // ..On zoom ou dézoom la fenetre 1
-                    zoom();
+                    zoomPleineLargeur();
+                    break;
+                // Si c'est la touche "1"..
+                case (KeyEvent.VK_3) :
+                    // ..On zoom ou dézoom la fenetre 1
+                    zoomPleinePage();
                     break;
                 // Si c'est la touche 2
                 case (KeyEvent.VK_2) :
@@ -249,6 +255,16 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
             }
         }
     }
+
+    private void zoomPleinePage() {
+        if (unified) {
+            fenetreApp.get(0).getContainer().zoomPleinePage();
+            fenetreApp.get(1).getContainer().zoomPleinePage();
+        } else {
+            fenetreApp.get(0).getContainer().zoomPleinePage();
+        }
+    }
+
     /**
      * Si le champ de numéro de page est selectionné alors
      * si l'utilisateur presse "Echap" alors on transmet le focus à la fenetre
@@ -325,7 +341,7 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      * Zoom (dézoom) le document
      * Si unifié, les 2 documents vont être zoomé (dézoomé)
      */
-    public void zoom() {
+    private void zoomPleineLargeur() {
         if (unified) {
             fenetreApp.get(0).getContainer().zoom();
             fenetreApp.get(1).getContainer().zoom();

@@ -37,7 +37,6 @@ public class Menu {
     private JMenu ouvrir;
     private JMenuItem ouvertureMemeFenetre;
     private JMenuItem ouvertureNouvelleFenetre;
-    private JMenuItem fermerFenetre;
     private JMenuItem quitter;
 
     private JMenu menuMode;
@@ -106,7 +105,6 @@ public class Menu {
         ouvrir = new JMenu("Ouvrir");
         ouvertureMemeFenetre = new JMenuItem("Sur cette fenetre");
         ouvertureNouvelleFenetre = new JMenuItem("Nouvelle fenetre");
-        //fermerFenetre = new JMenuItem("Fermer la fenetre");
         quitter = new JMenuItem("Quitter l'application");
         menuMode = new JMenu("Mode");
         modeUnifier = new JMenuItem("Mode Unifié");
@@ -196,13 +194,6 @@ public class Menu {
                 GestionFenetre.nouvelleFenetre();
             }
         });
-        /*
-        // évènement qui ferme la fenetre actuel
-        fermerFenetre.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fenetre.mainWindow.dispose();
-            }
-        }); */
 
         // évènement qui quitte l'application
         quitter.addActionListener(new ActionListener() {
