@@ -122,6 +122,14 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      * @param nouvelleValeur nouvelle Valeur de unified
      */
     public void setUnified(boolean nouvelleValeur) {
+
+        if (unified){
+            fenetreApp.get(0).button.setModeUnifier();
+            fenetreApp.get(1).button.setModeUnifier();
+        } else {
+            fenetreApp.get(0).button.setModeDifferencier();
+            fenetreApp.get(1).button.setModeDifferencier();
+        }
         unified = nouvelleValeur;
     }
 
@@ -164,6 +172,13 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
                 // Si c'est la touche U..
                 case (KeyEvent.VK_U) :
                     // On passe en mode unifié (ou différencié si deja unifié) si il y a 2 fenêtre
+                    if (unified){
+                        fenetreApp.get(0).button.setModeUnifier();
+                        fenetreApp.get(1).button.setModeUnifier();
+                    } else {
+                        fenetreApp.get(0).button.setModeDifferencier();
+                        fenetreApp.get(1).button.setModeDifferencier();
+                    }
                     if (fenetreApp.size() == 2) {
                         unified = !unified;
                     }

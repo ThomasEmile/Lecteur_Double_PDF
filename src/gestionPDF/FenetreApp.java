@@ -30,7 +30,7 @@ public class FenetreApp {
     private JPanel background;
 
     /** Champ menu */
-    private Menu button;
+    public Menu button;
     /** Champ du conteneur du pdf */
     public ContainerPDF container;
     /** Champ du listener clavier & souris */
