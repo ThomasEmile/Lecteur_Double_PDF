@@ -6,14 +6,11 @@
  * ----------------------------------------------------------------------------------------
  */
 
-package gestionPDF;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,7 +23,10 @@ import java.util.ArrayList;
 public class ContainerPDF {
 
     /** Document pdf du containerPDF */
-    private PDDocument document;
+    public PDDocument document;
+
+    /** True si le pdf est zoomé, false sinon */
+    public boolean classique = true;
 
     /** True si le pdf est zoomé, false sinon */
     public boolean zoomed = false;
@@ -50,7 +50,7 @@ public class ContainerPDF {
     public int nombrePage;
 
     /** Page actuellement affichée  */
-    private int pageActuelle = 1;
+    public int pageActuelle = 1;
 
     /** JScrollPane qui contient le containerDocumentPDF */
     public JScrollPane scrollPaneContainer;
@@ -71,7 +71,7 @@ public class ContainerPDF {
     private ArrayList<PanelImage> pages;
 
     /** Le PDF renderer qui permet de faire le rendu d'une page pdf en image */
-    private PDFRenderer pdfRenderer;
+    public PDFRenderer pdfRenderer;
 
     /** Dimension d'un espace */
     private Dimension dimensionEspace;
@@ -118,7 +118,7 @@ public class ContainerPDF {
         // Nombre de page du document
         nombrePage = document.getNumberOfPages();
         // Actualise le champ graphique du nombre max de page
-        fenetre.getButton().nombreDePage.setText(" | " + nombrePage);
+        fenetre.getMenu().nombreDePage.setText(" | " + nombrePage);
     }
 
     /**
@@ -169,10 +169,16 @@ public class ContainerPDF {
         return containerDocumentPDF;
     }
 
+    /**
+     * Configure le layout du documentPDF
+     */
     void configContainerPDF() {
         documentPDF.setLayout(new BoxLayout(documentPDF, BoxLayout.Y_AXIS));
     }
 
+    /**
+     * Configure la scroll bar
+     */
     void configScrollPaneContainer() {
         scrollPaneContainer.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }
@@ -183,7 +189,7 @@ public class ContainerPDF {
      */
     public void createPDF() {
 
-        pageActuelle = fenetre.getButton().c.getValue();
+        pageActuelle = fenetre.getMenu().c.getValue();
         heightTotal = 0;
 
         dimensionEspace = new Dimension(10, 100);
@@ -202,7 +208,7 @@ public class ContainerPDF {
                 /* On affiche les 5 images avant la n°c et les 5 après, le reste du documents reste des
                  * pages blanches
                  */
-                if (i <= fenetre.getButton().c.getValue() + 5 && i >= fenetre.getButton().c.getValue() - 5) {
+                if (i <= fenetre.getMenu().c.getValue() + 5 && i >= fenetre.getMenu().c.getValue() - 5) {
                     BufferedImage img1 = pdfRenderer.renderImageWithDPI(i, 100);
                     dimensionDeBase.set(i, new Dimension(img1.getWidth(), img1.getHeight()));
                     /* Création du panel contenant l'image i */
@@ -227,6 +233,9 @@ public class ContainerPDF {
                 heightTotal+= pages.get(i).height + unEspace.getHeight();
                 espaces.add(unEspace);
             }
+            JPanel unEspace = new JPanel();
+            setDimensionEspace(unEspace);
+            documentPDF.add(unEspace);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -238,15 +247,13 @@ public class ContainerPDF {
      * Actualisation du pdf
      */
     void updatePDF() {
-        if (pageActuelle < fenetre.getButton().c.getValue() - 3 || pageActuelle > fenetre.getButton().c.getValue() + 3) {
-            pageActuelle = fenetre.getButton().c.getValue();
+        if (pageActuelle < fenetre.getMenu().c.getValue() - 3 || pageActuelle > fenetre.getMenu().c.getValue() + 3) {
+            pageActuelle = fenetre.getMenu().c.getValue();
             /* Reinitialise la hauteur du document */
             heightTotal = 0;
             /* Recalcule la largeur d'un espace en fonction de la largeur de la fenêtre */
             dimensionEspace = new Dimension(fenetre.mainWindow.getWidth(), 100);
             try {
-                /* Transforme la page 0 du document en BufferedImage */
-                BufferedImage img = pdfRenderer.renderImageWithDPI(0, 100);
 
                 for (int i = 0; i < nombrePage; i++) {
 
@@ -260,7 +267,7 @@ public class ContainerPDF {
                     /* On affiche les 5 images avant la n°c et les 5 après, le reste du documents reste des
                      * pages blanches
                      */
-                    if (i < fenetre.getButton().c.getValue() + 5 && i > fenetre.getButton().c.getValue() - 5) {
+                    if (i < fenetre.getMenu().c.getValue() + 5 && i > fenetre.getMenu().c.getValue() - 5) {
                         /* Si il y avait déjà une image, on la redimensionne.. */
                         if (pages.get(i).image != null) {
                             pages.get(i).setTaille((int)(dimensionDeBase.get(i).width * ratio), (int)(dimensionDeBase.get(i).height * ratio));
@@ -290,12 +297,17 @@ public class ContainerPDF {
         documentPDF.updateUI();
     }
 
+
+    /**
+     * défini le ration de zoom
+     * @param i page sur laquelle on définit le ratio
+     */
     private void defRatio(int i) {
         if (zoomed) {
             ratio = (double) (fenetre.mainWindow.getWidth()) / (double) dimensionDeBase.get(i).width;
         } else if (pleinePage) {
-            ratio = (double) (fenetre.mainWindow.getHeight()) / (double) dimensionDeBase.get(i).height;
-        } else {
+            ratio = (double) (fenetre.mainWindow.getHeight() - fenetre.getMenu().getHauteurMenu() * 2 - 40) / (double) dimensionDeBase.get(i).height;
+        } else if (classique){
             ratio = 1;
         }
 
@@ -316,14 +328,29 @@ public class ContainerPDF {
     }
 
     /**
+     * Etabli les dimensions d'un espace
+     * @param unEspace
+     */
+    private void setDimensionEspace(JPanel unEspace) {
+        unEspace.setPreferredSize(dimensionEspace);
+        unEspace.setMinimumSize(dimensionEspace);
+        unEspace.setMaximumSize(dimensionEspace);
+        unEspace.setBackground(Color.DARK_GRAY);
+    }
+
+    /**
      * Méthode qui détermine le numéro de la page affichée, l'affiche
      * dans l'indicateur et actualise le compteur de page
      */
     public void updatePageCourante() {
+
         int pageActuelle = ((scrollPaneContainer.getVerticalScrollBar().getValue() - espaces.get(0).getHeight())
                 / (pages.get(0).height + espaces.get(0).getHeight()) + 1);
-        fenetre.getButton().choixPage.setText("" + pageActuelle);
-        fenetre.getButton().c.setValue(pageActuelle);
+        System.out.println(pageActuelle);
+        if (pageActuelle <= nombrePage) {
+            fenetre.getMenu().choixPage.setText("" + pageActuelle);
+            fenetre.getMenu().c.setValue(pageActuelle);
+        }
     }
 
     /**
@@ -331,18 +358,16 @@ public class ContainerPDF {
      * @param page le numéro de la page à afficher
      */
     public void goTo(int page) {
-        /* Positionne le curseur de la scrollbar au niveau de la page demandée*/
-        scrollPaneContainer.getVerticalScrollBar().setValue(
-                (int)((double)(page-1)/(double)getPages().size()* heightTotal)
-                        + getDimensionEspace().height);
-        /* Actualise le compteur de page */
-        fenetre.getButton().c.setValue(Math.min(fenetre.getContainer().nombrePage, page));
-        fenetre.getButton().choixPage.setText(String.valueOf(Math.min(fenetre.getContainer().nombrePage, page)));
-        /* On met pageActuelle à -10 pour que ce soit différent de la valeur de c et que la méthode updatePDF()
-         * affiche les nouvelles pages  */
-        setPageActuelle(-10);
-        updatePDF();
-
+            /* Positionne le curseur de la scrollbar au niveau de la page demandée*/
+            scrollPaneContainer.getVerticalScrollBar().setValue(
+                    pages.get(page - 1).getLocation().y);
+            /* Actualise le compteur de page */
+            fenetre.getMenu().c.setValue(Math.min(fenetre.getContainer().nombrePage, page));
+            fenetre.getMenu().choixPage.setText(String.valueOf(Math.min(fenetre.getContainer().nombrePage, page)));
+            /* On met pageActuelle à -10 pour que ce soit différent de la valeur de c et que la méthode updatePDF()
+             * affiche les nouvelles pages  */
+            setPageActuelle(-10);
+            updatePDF();
     }
 
     /**
@@ -372,12 +397,26 @@ public class ContainerPDF {
     }
 
     /**
+     * Méthode de zoom du pdf
+     * Change le statut "zoomé" du pdf et change le boolean updateScrollBar pour que le thread
+     * qui actualise puisse retourner sur la même page.
+     */
+    public void zoomClassique() {
+        pleinePage = false;
+        zoomed = false;
+        classique = true;
+        setPageActuelle(-10);
+        updatePDF();
+        updateScrollBar = true;
+    }
+
+    /**
      * Méthode qui envoie à la page précédente
      */
     public void pagePrecedente() {
-        if (fenetre.getButton().c.getValue() - 1 > 0) {
-            fenetre.getButton().c.decrease();
-            goTo(fenetre.getButton().c.getValue());
+        if (fenetre.getMenu().c.getValue() - 1 > 0) {
+            fenetre.getMenu().c.decrease();
+            goTo(fenetre.getMenu().c.getValue());
         }
     }
 
@@ -385,9 +424,9 @@ public class ContainerPDF {
      * Méthode qui envoie à la page suivante
      */
     public void pageSuivante() {
-        if (fenetre.getButton().c.getValue() + 1 <= nombrePage) {
-            fenetre.getButton().c.increment();
-            goTo(fenetre.getButton().c.getValue());
+        if (fenetre.getMenu().c.getValue() + 1 <= nombrePage) {
+            fenetre.getMenu().c.increment();
+            goTo(fenetre.getMenu().c.getValue());
         }
     }
 
@@ -417,6 +456,5 @@ public class ContainerPDF {
         updatePDF();
         updatePageCourante();
     }
-
 }
 

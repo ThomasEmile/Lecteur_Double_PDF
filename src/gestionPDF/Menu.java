@@ -5,7 +5,7 @@
  *                                                                                        *
  * ----------------------------------------------------------------------------------------
  */
-package gestionPDF;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import javax.swing.*;
@@ -24,11 +24,13 @@ public class Menu {
     public JTextField choixPage;
     public JLabel nombreDePage;
     private FenetreApp fenetre;
+    private int hauteurMenu;
 
     // création de la MenuBar afin d'implémenter les fonctionnalités : ouvrir, fermer et réduire un document pdf
     private JMenuBar menuBarMainWindow;
     private JMenu menuMainWindow;
     private JMenuItem ouvrir;
+    private JMenuItem remplacer;
     private JMenuItem quitter;
 
     private JMenu menuMode;
@@ -45,8 +47,8 @@ public class Menu {
 
     // déclaration de deux objets Counter
     public Counter c = new Counter();
-    
-    
+
+
     public Menu(FenetreApp fenetre) {
         c.setValue(1);
         this.fenetre = fenetre;
@@ -54,7 +56,8 @@ public class Menu {
         menuBarMainWindow = new JMenuBar();
         configMenu();
         containerButton = new JPanel();
-        Dimension dimension = new Dimension(1920, 60);
+        hauteurMenu = 60;
+        Dimension dimension = new Dimension(1920, hauteurMenu);
         containerButton.setMaximumSize(dimension);
         containerButton.setMinimumSize(dimension);
         pageSuivante = new JButton("↓");
@@ -67,10 +70,15 @@ public class Menu {
         addListeners(fenetre.clavierSouris);
     }
 
+    public int getHauteurMenu() {
+        return hauteurMenu;
+    }
+
     void configMenu(){
 
         menuMainWindow = new JMenu("Fichier");
         ouvrir = new JMenuItem("Ouvrir");
+        remplacer = new JMenuItem("Remplacer");
         quitter = new JMenuItem("Quitter l'application");
         menuMode = new JMenu("Mode");
         modeUnifier = new JMenuItem("Mode Unifié");
@@ -87,7 +95,8 @@ public class Menu {
         menuMode.setFont(new Font("SansSerif", Font.PLAIN, 16));
         menuAide.setFont(new Font("SansSerif", Font.PLAIN, 16));
 
-        ouvrir .setFont(new Font("SansSerif", Font.PLAIN, 12));
+        ouvrir.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        remplacer.setFont(new Font("SansSerif", Font.PLAIN, 12));
         quitter.setFont(new Font("SansSerif", Font.PLAIN, 12));
         modeUnifier.setFont(new Font("SansSerif", Font.PLAIN, 12));
         modeDifferencier.setFont(new Font("SansSerif", Font.PLAIN, 12));
@@ -95,6 +104,20 @@ public class Menu {
         pleineLargeur.setFont(new Font("SansSerif", Font.PLAIN, 12));
         pleinePage.setFont(new Font("SansSerif", Font.PLAIN, 12));
         aideRaccourci.setFont(new Font("SansSerif", Font.PLAIN, 12));
+
+
+        // événement remplacer le pdf
+        remplacer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = 0;
+                if (fenetre.clavierSouris.getFenetreApp().size() == 2 && fenetre.clavierSouris.getFenetreApp().get(1).equals(fenetre)) {
+                    index = 1;
+                }
+                GestionFenetre.remplacer(index);
+
+            }
+        });
 
         // évènement mode Unifié
         modeUnifier.addActionListener(new ActionListener() {
@@ -113,23 +136,24 @@ public class Menu {
         // évènement pleine Page
         pleinePage.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //TODO mettre la méthode de pleine page
+                // mettre la méthode de pleine page
+                fenetre.clavierSouris.zoomPleinePage();
             }
         });
 
         // évènement pleine Largeur
         pleineLargeur.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //TODO mettre la méthode de pleine largeur pour le moment cela zoom ou dezoom
-                fenetre.clavierSouris.zoom();
+                // la méthode de pleine largeur pour le moment cela zoom ou dezoom
+                fenetre.clavierSouris.zoomPleineLargeur();
             }
         });
 
         // évènement page classique
         affichageClassique.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                //TODO mettre la méthode de page classique pour le moment cela zoom ou dezoom
-                fenetre.clavierSouris.zoom();
+                // méthode de page classique pour le moment cela zoom ou dezoom
+                fenetre.clavierSouris.zoomClassique();
             }
         });
 
@@ -185,6 +209,7 @@ public class Menu {
     void ajoutComposants() {
         fenetre.getMainWindow().setJMenuBar(menuBarMainWindow);
         menuMainWindow.add(ouvrir);
+        menuMainWindow.add(remplacer);
         menuMainWindow.add(quitter);
         menuBarMainWindow.add(menuMainWindow);
         menuMode.add(modeUnifier);

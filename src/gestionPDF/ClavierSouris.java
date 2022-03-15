@@ -13,16 +13,19 @@ import java.awt.event.*;
 import java.util.ArrayList;
 
 /**
- * Méthode de gestion de tout les événements clavier et souris
+ * Classe de gestion de tout les événements clavier et souris
  */
 public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMotionListener, MouseListener, ComponentListener {
 
     /** Champ d'accès au containerPDF */
     private ContainerPDF containerPDF;
+
     /** Champ d'accès au buttonPanel */
     private Menu buttonPanel;
+
     /** Champ d'accès aux fenetreApp */
     private  ArrayList<FenetreApp> fenetreApp;
+
     /** Mode unifié */
     private static boolean unified = false;
 
@@ -62,27 +65,8 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      * Initialise fenetreApp[i] avec la FenetreApp passé en paramètre
      * @param fenetreApp le nouveau FenetreApp
      */
-    public void setFenetreApp(FenetreApp fenetreApp) {
-        if (this.fenetreApp == null) {
-            this.fenetreApp = new ArrayList<>();
-            this.fenetreApp.add(0, fenetreApp);
-        } else if (this.fenetreApp.size() == 0) {
-            this.fenetreApp.add(0, fenetreApp);
-        } else if (this.fenetreApp.size() == 1) {
-            //get local graphics environment
-            GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-            //get maximum window bounds
-            Rectangle maximumWindowBounds = graphicsEnvironment.getMaximumWindowBounds();
-            int largeurEcran = maximumWindowBounds.width;
-            int hauteurEcran = maximumWindowBounds.height;
-            this.fenetreApp.add(1, fenetreApp);
-            this.fenetreApp.get(0).getMainWindow().setLocation(0, 0);
-            this.fenetreApp.get(0).getMainWindow().setSize(new Dimension(largeurEcran / 2, hauteurEcran));
-            this.fenetreApp.get(0).mainWindow.requestFocus();
-            this.fenetreApp.get(1).getMainWindow().setLocation(largeurEcran / 2, 0);
-            this.fenetreApp.get(1).getMainWindow().setSize(new Dimension(largeurEcran / 2, hauteurEcran));
-            this.fenetreApp.get(1).getMainWindow().requestFocus();
-        }
+    public void setFenetreApp(FenetreApp fenetreApp, int index) {
+            this.fenetreApp.add(index, fenetreApp);
     }
 
     /**
@@ -91,22 +75,16 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      * @param index l'index de la fenetre à remplacer
      */
     public void remplacerFenetre(FenetreApp fenetreApp, int index) {
-        // On enregistre l'environnement grpahique
-        GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        // pour obtenir la taille totale de l'écran
-        Rectangle maximumWindowBounds = graphicsEnvironment.getMaximumWindowBounds();
-
-        int largeurEcran = maximumWindowBounds.width;
-        int hauteurEcran = maximumWindowBounds.height;
-
+        Point localisation;
+        Dimension taille;
+        localisation = this.fenetreApp.get(index).mainWindow.getLocation();
+        taille = this.fenetreApp.get(index).mainWindow.getSize();
         this.fenetreApp.get(index).mainWindow.dispose();
         this.fenetreApp.set(index, fenetreApp);
+        this.fenetreApp.get(index).mainWindow.setSize(taille);
+        this.fenetreApp.get(index).mainWindow.setLocation(localisation);
         this.fenetreApp.get(index).mainWindow.setVisible(true);
         this.fenetreApp.get(index).mainWindow.requestFocus();
-        this.fenetreApp.get(0).mainWindow.setLocation(0, 0);
-        this.fenetreApp.get(0).mainWindow.setSize(largeurEcran / 2, hauteurEcran);
-        this.fenetreApp.get(1).mainWindow.setLocation(largeurEcran / 2, 0);
-        this.fenetreApp.get(1).mainWindow.setSize(largeurEcran / 2, hauteurEcran);
     }
 
     /**
@@ -141,14 +119,13 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
         // Détermine le code de la touche qui à été pressée
         int code = e.getKeyCode();
 
-        /* Si le focus est sur le choix de page alors on appelle la méthode qui gère
+        /*
+         * Si le focus est sur le choix de page alors on appelle la méthode qui gère
          * les actions du choix de page gestionChoixPage(int)..
          */
-
-
-        if (fenetreApp.size() >= 1 && fenetreApp.get(0).getButton().choixPage.hasFocus()) {
+        if (fenetreApp.size() >= 1 && fenetreApp.get(0).getMenu().choixPage.hasFocus()) {
             gestionChoixPage(code, fenetreApp.get(0));
-        } else if (fenetreApp.size() >= 2 && fenetreApp.get(1).getButton().choixPage.hasFocus()) {
+        } else if (fenetreApp.size() >= 2 && fenetreApp.get(1).getMenu().choixPage.hasFocus()) {
             gestionChoixPage(code, fenetreApp.get(1));
         /* ..Sinon on détermine l'action à effectuer en fonction de la touche pressée */
         } else {
@@ -163,21 +140,25 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
                 // Si c'est la touche D..
                 case (KeyEvent.VK_D) :
                     // ..Alors on passe à la page suivante de la fenetre 2
+                    if (fenetreApp.size() == 2 && !unified)
                     fenetreApp.get(1).getContainer().pageSuivante();
                     break;
                 // Si c'est la touche Q
                 case (KeyEvent.VK_Q):
                     // ..Alors on passe à la page précédente de la fenetre 2
+                    if (fenetreApp.size() == 2 && !unified)
                     fenetreApp.get(1).getContainer().pagePrecedente();
                     break;
                 // Si c'est la touche Z
                 case (KeyEvent.VK_Z) :
                     // ..Alors on monte dans le document de la fenetre 2
+                    if (fenetreApp.size() == 2 && !unified)
                     fenetreApp.get(1).getContainer().monter();
                     break;
                 // Si c'est la touche S
                 case (KeyEvent.VK_S):
                     // ..Alors on descend dans le document de la fenetre 2
+                    if (fenetreApp.size() == 2 && !unified)
                     fenetreApp.get(1).getContainer().descendre();
                     break;
                 // Si c'est la flèche de droite..
@@ -202,44 +183,44 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
                     break;
                 // Si c'est la touche "R"..
                 case (KeyEvent.VK_R):
-                    // ..Alors on sélectionne le champ de choix de page de la fenetre 1
+                    // .. Alors on sélectionne le champ de choix de page de la fenetre 1
                     // Et on pré-sélectionne le texte qui y est
                     choixPage(0);
                     break;
                 // Si c'est la touche T
                 case (KeyEvent.VK_T):
-                    // ..Alors on sélectionne le champ de choix de page de la fenetre 2
+                    // .. Alors on sélectionne le champ de choix de page de la fenetre 2
                     // Et on pré-sélectionne le texte qui y est
                     choixPage(1);
                     break;
                 // Si c'est la touche "1"..
                 case (KeyEvent.VK_1) :
-                    // ..On zoom ou dézoom la fenetre 1
+                    // ..On zoom en pleine largeur ou dézoom la fenetre 1
                     zoomPleineLargeur();
-                    break;
-                // Si c'est la touche "1"..
-                case (KeyEvent.VK_3) :
-                    // ..On zoom ou dézoom la fenetre 1
-                    zoomPleinePage();
                     break;
                 // Si c'est la touche 2
                 case (KeyEvent.VK_2) :
-                    // ..On zoom ou dézoom la fenetre 2
+                    // ..On zoom en pleine largeur ou dézoom la fenetre 2
+                    if (fenetreApp.size() == 2 && !unified)
                     fenetreApp.get(1).getContainer().zoom();
+                    break;
+                // Si c'est la touche "3"..
+                case (KeyEvent.VK_3) :
+                    // ..On zoom en pleine page ou dézoom la fenetre 1
+                    zoomPleinePage();
+                    break;
+                // Si c'est la touche "4"..
+                case (KeyEvent.VK_4) :
+                    // ..On zoom en pleine page ou dézoom la fenetre 2
+                    if (fenetreApp.size() == 2 && !unified)
+                        fenetreApp.get(1).getContainer().zoomPleinePage();
                     break;
 
             }
         }
     }
 
-    private void zoomPleinePage() {
-        if (unified) {
-            fenetreApp.get(0).getContainer().zoomPleinePage();
-            fenetreApp.get(1).getContainer().zoomPleinePage();
-        } else {
-            fenetreApp.get(0).getContainer().zoomPleinePage();
-        }
-    }
+
 
     /**
      * Si le champ de numéro de page est selectionné alors
@@ -261,16 +242,11 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
              * de choix de page sous réserve que c'est un entier compris entre 1 et le nombre maximum de page
              */
             case (KeyEvent.VK_ENTER):
-                if (fenetre.getButton().choixPage.hasFocus()) {
-                    fenetre.mainWindow.requestFocus();
                     try {
-                        if (!unified && Integer.parseInt(fenetre.getButton().choixPage.getText()) <= fenetre.getContainer().getNombrePage()) {
-                                fenetre.getContainer().goTo(Integer.parseInt(fenetre.getButton().choixPage.getText()));
-                        } else if (unified && Integer.parseInt(fenetre.getButton().choixPage.getText())
-                                <= Math.max(this.fenetreApp.get(0).getContainer().getNombrePage(), this.fenetreApp.get(1).getContainer().getNombrePage())) {
-                                goTo(Integer.parseInt(fenetre.getButton().choixPage.getText()));
-                        } else {
-                            throw new NumberFormatException();
+                        if (fenetreApp.get(0).getMenu().choixPage.hasFocus()) {
+                            choixPage(fenetreApp.get(0));
+                        } else if (fenetreApp.get(1).getMenu().choixPage.hasFocus()) {
+                            choixPage(fenetreApp.get(1));
                         }
                     } catch (NumberFormatException e1) {
                         if (unified && fenetreApp.size() > 1) {
@@ -281,10 +257,40 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
                                     + fenetre.getContainer().nombrePage);
                         }
                     }
-                }
+
                 break;
         }
 
+    }
+
+    /**
+     * Méthode de saut de page par le champ grapique de choix de page
+     * @param fenetre la fenêtre sur laquelle appliquée ce choix de page
+     */
+    private void choixPage(FenetreApp fenetre) {
+        int page;
+        try {
+            page = Integer.parseInt(fenetre.getMenu().choixPage.getText());
+
+        } catch (NumberFormatException e) {
+            page = -1;
+        }
+        if (!unified && page <= fenetre.getContainer().getNombrePage()
+             && page > 0) {
+                fenetre.getContainer().goTo(Math.min(fenetre.getContainer().nombrePage, page));
+        } else if (unified && page
+                <= Math.max(this.fenetreApp.get(0).getContainer().getNombrePage(), this.fenetreApp.get(1).getContainer().getNombrePage())
+                && page > 0) {
+            if (unified) {
+                fenetreApp.get(0).getContainer().goTo(Math.min(fenetreApp.get(0).getContainer().nombrePage, page));
+                fenetreApp.get(1).getContainer().goTo(Math.min(fenetreApp.get(1).getContainer().nombrePage, page));
+            } else {
+                goTo(Integer.parseInt(fenetre.getMenu().choixPage.getText()));
+            }
+        } else {
+            throw new NumberFormatException();
+        }
+        fenetre.mainWindow.requestFocus();
     }
 
 
@@ -308,21 +314,46 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      * @param index l'index de la fenêtre où l'on sélectionne (focus) ce champ
      */
     private void choixPage(int index) {
-        fenetreApp.get(index).getButton().choixPage.requestFocus();
-        fenetreApp.get(index).getButton().choixPage.selectAll();
-
+        fenetreApp.get(index).getMenu().choixPage.requestFocus();
+        fenetreApp.get(index).getMenu().choixPage.selectAll();
     }
 
     /**
-     * Zoom (dézoom) le document
+     * Zoom (dézoom) le document en pleine largeur
      * Si unifié, les 2 documents vont être zoomé (dézoomé)
      */
-    private void zoomPleineLargeur() {
+    public void zoomPleineLargeur() {
         if (unified) {
             fenetreApp.get(0).getContainer().zoom();
             fenetreApp.get(1).getContainer().zoom();
         } else {
             fenetreApp.get(0).getContainer().zoom();
+        }
+    }
+
+    /**
+     * Zoom (dézoom) le document en pleine pleine page
+     * Si unifié, les 2 documents vont être zoomé (dézoomé)
+     */
+    public void zoomPleinePage() {
+        if (unified) {
+            fenetreApp.get(0).getContainer().zoomPleinePage();
+            fenetreApp.get(1).getContainer().zoomPleinePage();
+        } else {
+            fenetreApp.get(0).getContainer().zoomPleinePage();
+        }
+    }
+
+    /**
+     * revient au format 100%
+     * Si unifié, les 2 documents vont être zoomé (dézoomé)
+     */
+    public void zoomClassique() {
+        if (unified) {
+            fenetreApp.get(0).getContainer().zoomClassique();
+            fenetreApp.get(1).getContainer().zoomClassique();
+        } else {
+            fenetreApp.get(0).getContainer().zoomClassique();
         }
     }
 
@@ -385,6 +416,7 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      */
     private void descendre() {
         if (unified) {
+
             fenetreApp.get(0).getContainer().descendre();
             fenetreApp.get(1).getContainer().descendre();
         } else {
@@ -470,7 +502,7 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
     @Override
     public void mouseDragged(MouseEvent e) {
         fenetreApp.get(0).getContainer().updatePageCourante();
-        if (fenetreApp.size() == 2) {
+        if (fenetreApp.size() == 2 && unified) {
             fenetreApp.get(1).getContainer().updatePageCourante();
         }
 
@@ -502,7 +534,7 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
         containerPDF.updatePDF();
         if (fenetreApp.size()==2) {
             fenetreApp.get(1).getContainer().updatePageCourante();
-            fenetreApp.get(1).getButton().choixPage.setText(String.valueOf(1 + buttonPanel.c.getValue()));
+            fenetreApp.get(1).getMenu().choixPage.setText(String.valueOf(1 + buttonPanel.c.getValue()));
             fenetreApp.get(1).getContainer().updatePDF();
         }
 
@@ -603,5 +635,13 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
     @Override
     public void componentHidden(ComponentEvent e) {
 
+    }
+
+    /**
+     * setter de unified
+     * @param b la nouvelle valeur de unified
+     */
+    public void setUnified(boolean b) {
+        unified = b;
     }
 }
