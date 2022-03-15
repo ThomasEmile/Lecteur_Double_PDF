@@ -49,7 +49,7 @@ public class Menu {
         pagePrecedente.setFocusable(false);
         choixPage = new JTextField(2);
         choixPage.setText("1");
-        nombreDePage = new JLabel("| " + String.valueOf(0));
+        nombreDePage = new JLabel("| " + 0);
         addListeners(fenetre.clavierSouris);
     }
 
@@ -71,34 +71,16 @@ public class Menu {
         containerButton.setBackground(new Color(184, 184, 184));
 
         // évènement page suivante
-        pageSuivante.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fenetre.clavierSouris.pageSuivante(fenetre);
-            }
-        });
+        pageSuivante.addActionListener(e -> fenetre.clavierSouris.pageSuivante(fenetre));
 
         // évènement page precedente
-        pagePrecedente.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fenetre.clavierSouris.pagePrecedente(fenetre);
-
-            }
-        });
+        pagePrecedente.addActionListener(e -> fenetre.clavierSouris.pagePrecedente(fenetre));
 
         // évènement qui ouvre un nouveau document pdf
-        ouvrir.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                GestionFenetre.nouvelleFenetre();
-            }
-        });
+        ouvrir.addActionListener(e -> GestionFenetre.nouvelleFenetre());
 
         // évènement qui quitte l'application
-        quitter.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(1);
-            }
-        });
+        quitter.addActionListener(e -> System.exit(1));
 
     }
 

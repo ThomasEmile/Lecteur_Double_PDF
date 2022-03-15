@@ -76,7 +76,7 @@ public class PanelImage extends JPanel  {
 
     /**
      * Applique la BufferedImage img1 au panel
-     * @param img1
+     * @param img1 image 1
      */
     public void setImage(BufferedImage img1) {
         image = img1;

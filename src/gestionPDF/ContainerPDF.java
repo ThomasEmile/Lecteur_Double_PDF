@@ -114,7 +114,7 @@ public class ContainerPDF {
 
     /**
      * Setter de pageActuelle
-     * @param pageActuelle
+     * @param pageActuelle page actuelle
      */
     public void setPageActuelle(int pageActuelle) {
         this.pageActuelle = pageActuelle;

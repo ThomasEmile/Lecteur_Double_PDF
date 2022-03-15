@@ -1,7 +1,3 @@
-import gestionPDF.Clavier;
-
-import java.util.ArrayList;
-
 /**
  * Classe qui gère l'attribution des touches pour chacune des fonctions
  */
@@ -73,7 +69,7 @@ public class RaccourciClavier {
          * @param nomFich fichier de sauvegarde des touches
          */
         public RaccourciClavier(String nomFich) throws IllegalArgumentException {
-                // NON FAIT récupérer l'objet associationsTouchesFonctions écrit dans le fichier
+                // À FAIRE récupérer l'objet associationsTouchesFonctions écrit dans le fichier
         }
 
         /**
@@ -132,7 +128,7 @@ public class RaccourciClavier {
          * méthode de test
          * @param args non utilisé
          */
-        /* public static void main(String[] args) {
+         public static void main(String[] args) {
                 RaccourciClavier raccourciClavier = new RaccourciClavier();
                 // Test getFonction
                 System.out.println("Test getFonction");
@@ -162,5 +158,5 @@ public class RaccourciClavier {
                 } catch (IllegalArgumentException e) {
                         System.out.println("Z : Exception bien gérée");
                 }
-        } */
+        }
 }

@@ -34,7 +34,7 @@ public class Actualiseur extends Thread {
 
     @Override
     public void run() {
-        /** Boucle infinie */
+        /* Boucle infinie */
         while (true) {
             try {
                 sleep(100);
