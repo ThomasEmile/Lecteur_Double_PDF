@@ -10,6 +10,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -33,10 +34,15 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      * Constructeur par défaut de la classe ClavierSouris
      */
     public ClavierSouris() {
-        // crée une nouvelle configuration clavier (celle par défaut)
-        raccourciClavier = new RaccourciClavier();
-        // test
-        System.out.println("raccourci clavier nouvelle config créée");
+        // aucune exception n'est levée ici s'il n'y a pas de fichier
+        File f = new File(RaccourciClavier.CHEMIN_FICH_CONFIG_DEFAULT);
+
+        // S'il y a un fichier on récupère la config
+        if(f.isFile())
+            raccourciClavier = new RaccourciClavier(RaccourciClavier.CHEMIN_FICH_CONFIG_DEFAULT);
+        else
+            // crée une nouvelle configuration clavier (celle par défaut)
+            raccourciClavier = new RaccourciClavier();
         fenetreApp = new ArrayList<>();
     }
 
@@ -216,8 +222,7 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      * @param fonctionALancer label exact parmi ceux définis de la fonction à lancer
      */
     public void fonctionRaccourci(String fonctionALancer) {
-        // test
-        System.out.println("fonction à lancer :" + fonctionALancer);
+        // test System.out.println("fonction à lancer :" + fonctionALancer);
         switch (fonctionALancer) {
             // 0 Passe en mode unifié (ou différencié si deja unifié) s'il y a 2 fenêtre
             case "changementModeAffich":

@@ -1,12 +1,16 @@
+import java.io.*;
+
 /**
  * Classe qui gère l'attribution des touches pour chacune des fonctions
  */
 public class RaccourciClavier {
 
+        public static final String CHEMIN_FICH_CONFIG_DEFAULT = "raccourciClavier.config";
+
         /**
          * Liste des associations touches-fonctions constantes par défaut.
          */
-        public final String[][] ASSOCIATION_TOUCHE_FONCTION_DEFAULT = {
+        public static final String[][] ASSOCIATION_TOUCHE_FONCTION_DEFAULT = {
                 // 0 Passe en mode unifié (ou différencié si deja unifié) s'il y a 2 fenêtre
                 {"changementModeAffich","U"},
                 // 1 Passe à la page suivante de la fenêtre 2
@@ -36,13 +40,13 @@ public class RaccourciClavier {
                  */
                 {"choixFenetreDeuxieme","T"},
                 // 11 zoom ou dézoome la fenêtre 1
-                {"inverseZoomFenetrePremiere","1"},
+                {"inverseZoomFenetrePremiere","N1"},
                 // 12 zoom ou dézoome la fenêtre 2
-                {"inverseZoomFenetreDeuxieme","2"}
+                {"inverseZoomFenetreDeuxieme","N2"}
         };
 
         /** Liste des touches paramétrables (43 touches au total). */
-        public final String[] LABELS_TOUCHES = {
+        public static final String[] LABELS_TOUCHES = {
                 "A","Z","E","R","T","Y","U","I","O","P",
                 "Q","S","D","F","G","H","J","K","L","M",
                 "W","X","C","V","B","N","NONE","ECHAP","ENTREE",
@@ -60,16 +64,57 @@ public class RaccourciClavier {
          * permet de créer une instance si aucune sauvegarde de touche n'est donnée
          */
         public RaccourciClavier() {
-                associationsTouchesFonctions = ASSOCIATION_TOUCHE_FONCTION_DEFAULT;
+            associationsTouchesFonctions = ASSOCIATION_TOUCHE_FONCTION_DEFAULT;
+            // créer un fichier au format touche fonction
+            try {
+                // declaration et création de l'objet fichier
+                PrintWriter fichierD = new PrintWriter(new FileWriter(CHEMIN_FICH_CONFIG_DEFAULT));
+
+                for (String[] associationsTouchesFonction : associationsTouchesFonctions) {
+                    // écrit la fonction
+                    fichierD.println(associationsTouchesFonction[0]);
+                    // écrit la touche
+                    fichierD.println(associationsTouchesFonction[1]);
+                }
+                // fermeture du fichier
+                fichierD.close();
+            } catch (IOException e) {
+                System.out.println("Problème d'accès au fichier");
+            }
+
         }
 
         /**
          * Constructeur avec fichier de sauvegarde des touches :
          * Permet de créer une instance avec un fichier contenant les sauvegardes des touches déjà configurées
-         * @param nomFich fichier de sauvegarde des touches
+         * @param nomFich chemin fichier de sauvegarde des touches
          */
         public RaccourciClavier(String nomFich) throws IllegalArgumentException {
-                // À FAIRE récupérer l'objet associationsTouchesFonctions écrit dans le fichier
+            // éviter l'exception NullPointerException
+            associationsTouchesFonctions = ASSOCIATION_TOUCHE_FONCTION_DEFAULT;
+            // lire le fichier texte contenant les associations touches-fonctions
+            try {
+                // declaration et création de l'objet fichier
+                BufferedReader fichierS = new BufferedReader(new FileReader(nomFich));
+                String ligne,fonction = "",touche = "";
+                int i = 0;
+                do {
+                    ligne = fichierS.readLine(); // lecture d'une ligne
+                    if(ligne != null && !ligne.isEmpty()) {
+                        if(i%2==0)
+                            fonction = ligne;
+                        else
+                            touche = ligne;
+                        if(i > 1 && i%2 == 0)
+                            definirToucheFonction(touche,fonction);
+                    }
+                    i++;
+                } while(ligne != null);
+
+                fichierS.close(); // fermeture du fichier
+            } catch (IOException e) {
+                System.out.println("Problème d'accès au fichier " + nomFich);
+            }
         }
 
         /**
@@ -78,15 +123,17 @@ public class RaccourciClavier {
          * @param lblFonction label fonction
          */
         public void definirToucheFonction(String lblTouche, String lblFonction) {
-                // on teste si la touche et la fonction existent
-                getTouche(lblTouche);
-                getFonction(lblFonction);
-                // on parcours les associations
-                for(int i = 0; i < associationsTouchesFonctions.length;i++)
-                        // on trouve la fonction
-                        if(associationsTouchesFonctions[i][0].equals(lblFonction))
-                                // on associe la touche
-                                associationsTouchesFonctions[i][1] = lblTouche;
+            // on teste si la touche et la fonction existent
+            getTouche(lblFonction);
+            getFonction(lblTouche);
+            // on parcours les associations
+            for (String[] associationsTouchesFonction : associationsTouchesFonctions)
+            {
+                // on trouve la fonction
+                if(associationsTouchesFonction[0].equals(lblFonction))
+                        // on associe la touche
+                        associationsTouchesFonction[1] = lblTouche;
+            }
         }
 
         /**
@@ -111,8 +158,7 @@ public class RaccourciClavier {
          * @throws IllegalArgumentException si la touche n'existe pas parmi les labels existants
          */
         public String getFonction(String touche) throws IllegalArgumentException {
-            // test
-            System.out.println(touche + " détectée");
+            // test System.out.println(touche + " détectée");
             // on cherche parmi les touches définies
             for (String[] associationsTouchesFonction : associationsTouchesFonctions)
                     if (associationsTouchesFonction[1].equals(touche))
@@ -122,7 +168,7 @@ public class RaccourciClavier {
                     if (labels_touch.equals(touche))
                             return "indéfinie";
             // la touche n'est pas trouvée
-            throw new IllegalArgumentException("touche introuvable parmi celles enregistrées");
+            throw new IllegalArgumentException("touche \"" + touche + "\" introuvable parmi celles enregistrées");
         }
 
 
@@ -171,6 +217,20 @@ public class RaccourciClavier {
                     System.out.println("DOWN : pblm label");
              } catch (IllegalArgumentException e) {
                  System.out.println("Z : pblm exception");
+             }
+             // définir touche fonction
+             System.out.println("Test definirToucheFonction :");
+             try {
+                 raccourciClavier.definirToucheFonction("monter","A");
+                 System.out.println("monter,A : pblm touche et fonction inversés");
+             } catch (IllegalArgumentException e) {
+                 System.out.println("monter,A : exception bien gérée");
+             }
+             try {
+                 raccourciClavier.definirToucheFonction("A","monter");
+                 System.out.println("A,monter : fonctionne");
+             } catch (IllegalArgumentException e) {
+                 System.out.println("A,monter : pblm exception");
              }
         }
 }
