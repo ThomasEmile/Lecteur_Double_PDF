@@ -46,7 +46,7 @@ public class Actualiseur extends Thread {
              */
             redimensionne();
 
-            /* Actualise la postion de la scrollbar si besoin
+            /* Actualise la position de la scrollbar si besoin
             * (fenetreApp.container.updateScrollBar positionné à true)
             */
             actualiseScrollBar();

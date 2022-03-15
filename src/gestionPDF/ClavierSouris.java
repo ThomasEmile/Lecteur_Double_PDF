@@ -35,6 +35,8 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
     public ClavierSouris() {
         // crée une nouvelle configuration clavier (celle par défaut)
         raccourciClavier = new RaccourciClavier();
+        // test
+        System.out.println("raccourci clavier nouvelle config créée");
         fenetreApp = new ArrayList<>();
     }
 
@@ -214,6 +216,8 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      * @param fonctionALancer label exact parmi ceux définis de la fonction à lancer
      */
     public void fonctionRaccourci(String fonctionALancer) {
+        // test
+        System.out.println("fonction à lancer :" + fonctionALancer);
         switch (fonctionALancer) {
             // 0 Passe en mode unifié (ou différencié si deja unifié) s'il y a 2 fenêtre
             case "changementModeAffich":

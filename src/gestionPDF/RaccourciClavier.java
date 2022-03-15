@@ -111,16 +111,18 @@ public class RaccourciClavier {
          * @throws IllegalArgumentException si la touche n'existe pas parmi les labels existants
          */
         public String getFonction(String touche) throws IllegalArgumentException {
-                // on cherche parmi les touches définies
-                for (String[] associationsTouchesFonction : associationsTouchesFonctions)
-                        if (associationsTouchesFonction[1].equals(touche))
-                                return associationsTouchesFonction[1];
-                // on cherche parmi les touches indéfinies
-                for (String labels_touch : LABELS_TOUCHES)
-                        if (labels_touch.equals(touche))
-                                return "indéfinie";
-                // la touche n'est pas trouvée
-                throw new IllegalArgumentException("touche introuvable parmi celles enregistrées");
+            // test
+            System.out.println(touche + " détectée");
+            // on cherche parmi les touches définies
+            for (String[] associationsTouchesFonction : associationsTouchesFonctions)
+                    if (associationsTouchesFonction[1].equals(touche))
+                            return associationsTouchesFonction[0];
+            // on cherche parmi les touches indéfinies
+            for (String labels_touch : LABELS_TOUCHES)
+                    if (labels_touch.equals(touche))
+                            return "indéfinie";
+            // la touche n'est pas trouvée
+            throw new IllegalArgumentException("touche introuvable parmi celles enregistrées");
         }
 
 
@@ -133,10 +135,12 @@ public class RaccourciClavier {
                 // Test getFonction
                 System.out.println("Test getFonction");
                 try {
-                        System.out.println(raccourciClavier.getFonction("A"));
-                        System.out.println("A : fonctionne");
+                        if((raccourciClavier.getFonction("A")).equals("indéfinie"))
+                            System.out.println("A : fonctionne");
+                        else
+                            System.out.println("A : mauvais label");
                 } catch (IllegalArgumentException e) {
-                        System.out.println("A : NOK");
+                        System.out.println("A : pblm exception");
                 }
                 try {
                         raccourciClavier.getFonction("TOUCHE");
@@ -147,10 +151,12 @@ public class RaccourciClavier {
                 // Test getTouche
                 System.out.println("Test getTouche :");
                 try {
-                        System.out.println(raccourciClavier.getTouche("monter"));
-                        System.out.println("monter : fonctionne");
+                        if(raccourciClavier.getTouche("monter").equals("UP"))
+                            System.out.println("monter : fonctionne");
+                        else
+                            System.out.println("monter : pblm label");
                 } catch (IllegalArgumentException e) {
-                        System.out.println("monter : pblm");
+                        System.out.println("monter : pblm exception");
                 }
                 try {
                         raccourciClavier.getTouche("Z");
@@ -158,5 +164,13 @@ public class RaccourciClavier {
                 } catch (IllegalArgumentException e) {
                         System.out.println("Z : Exception bien gérée");
                 }
+             try {
+                 if(raccourciClavier.getFonction("DOWN").equals("descendre"))
+                     System.out.println("DOWN : fonctionne");
+                 else
+                    System.out.println("DOWN : pblm label");
+             } catch (IllegalArgumentException e) {
+                 System.out.println("Z : pblm exception");
+             }
         }
 }
