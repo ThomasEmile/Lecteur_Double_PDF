@@ -26,10 +26,15 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
     /** Mode unifié */
     private static boolean unified = false;
 
+    /** ClavierSouris doit connaitre les raccourcis clavier */
+    private RaccourciClavier raccourciClavier;
+
     /**
      * Constructeur par défaut de la classe ClavierSouris
      */
     public ClavierSouris() {
+        // crée une nouvelle configuration clavier (celle par défaut)
+        raccourciClavier = new RaccourciClavier();
         fenetreApp = new ArrayList<>();
     }
 
@@ -141,91 +146,141 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
         // Détermine le code de la touche qui a été pressée
         int code = e.getKeyCode();
 
-        /* Si le focus est sur le choix de page alors on appelle la méthode qui gère
+        /*
+         * Si le focus est sur le choix de page alors on appelle la méthode qui gère
          * les actions du choix de page gestionChoixPage(int)..
          */
-
-
         if (fenetreApp.size() >= 1 && fenetreApp.get(0).getButton().choixPage.hasFocus()) {
             gestionChoixPage(code, fenetreApp.get(0));
         } else if (fenetreApp.size() >= 2 && fenetreApp.get(1).getButton().choixPage.hasFocus()) {
             gestionChoixPage(code, fenetreApp.get(1));
         /* ..Sinon on détermine l'action à effectuer en fonction de la touche pressée */
         } else {
+            // touche sélectionnée
             switch (code) {
-                // Si c'est la touche U..
-                case (KeyEvent.VK_U) :
-                    // On passe en mode unifié (ou différencié si deja unifié) s'il y a 2 fenêtre
-                    if (fenetreApp.size() == 2) {
-                        unified = !unified;
-                    }
-                    break;
-                // Si c'est la touche D..
-                case (KeyEvent.VK_D) :
-                    // ..Alors on passe à la page suivante de la fenêtre 2
-                    fenetreApp.get(1).getContainer().pageSuivante();
-                    break;
-                // Si c'est la touche Q
-                case (KeyEvent.VK_Q):
-                    // ..Alors on passe à la page précédente de la fenêtre 2
-                    fenetreApp.get(1).getContainer().pagePrecedente();
-                    break;
-                // Si c'est la touche Z
-                case (KeyEvent.VK_Z) :
-                    // ..Alors on monte dans le document de la fenêtre 2
-                    fenetreApp.get(1).getContainer().monter();
-                    break;
-                // Si c'est la touche S
-                case (KeyEvent.VK_S):
-                    // ..Alors on descend dans le document de la fenêtre 2
-                    fenetreApp.get(1).getContainer().descendre();
-                    break;
-                // Si c'est la flèche de droite..
-                case (KeyEvent.VK_RIGHT):
-                    // ..Alors on passe à la page suivante
-                    pageSuivante();
-                    break;
-                // Si c'est la flèche de gauche..
-                case (KeyEvent.VK_LEFT):
-                    // ..Alors on passe à la page précédente
-                    pagePrecedente();
-                    break;
-                // Si c'est la flèche du bas..
-                case (KeyEvent.VK_DOWN):
-                    // ..Alors on scroll vers le bas
-                    descendre();
-                    break;
-                // Si c'est la flèche du haut..
-                case (KeyEvent.VK_UP):
-                    // .. Alors on scroll vers le haut
-                    monter();
-                    break;
-                // Si c'est la touche "R"..
-                case (KeyEvent.VK_R):
-                    // .. Alors on sélectionne le champ de choix de page de la fenêtre 1
-                    // Et on présélectionne le texte qui y est
-                    choixPage(0);
-                    break;
-                // Si c'est la touche T
-                case (KeyEvent.VK_T):
-                    // .. Alors on sélectionne le champ de choix de page de la fenêtre 2
-                    // Et on présélectionne le texte qui y est
-                    choixPage(1);
-                    break;
-                // Si c'est la touche "1"..
-                case (KeyEvent.VK_1) :
-                    // ..On zoom ou dézoome la fenêtre 1
-                    zoom();
-                    break;
-                // Si c'est la touche 2
-                case (KeyEvent.VK_2) :
-                    // ..On zoom ou dézoome la fenêtre 2
-                    fenetreApp.get(1).getContainer().zoom();
-                    break;
-
+                // exécution de la fonction liée à la touche
+                case (KeyEvent.VK_A) -> fonctionRaccourci(raccourciClavier.getFonction("A"));
+                case (KeyEvent.VK_Z) -> fonctionRaccourci(raccourciClavier.getFonction("Z"));
+                case (KeyEvent.VK_E) -> fonctionRaccourci(raccourciClavier.getFonction("E"));
+                case (KeyEvent.VK_R) -> fonctionRaccourci(raccourciClavier.getFonction("R"));
+                case (KeyEvent.VK_T) -> fonctionRaccourci(raccourciClavier.getFonction("T"));
+                case (KeyEvent.VK_Y) -> fonctionRaccourci(raccourciClavier.getFonction("Y"));
+                case (KeyEvent.VK_U) -> fonctionRaccourci(raccourciClavier.getFonction("U"));
+                case (KeyEvent.VK_I) -> fonctionRaccourci(raccourciClavier.getFonction("I"));
+                case (KeyEvent.VK_O) -> fonctionRaccourci(raccourciClavier.getFonction("O"));
+                case (KeyEvent.VK_P) -> fonctionRaccourci(raccourciClavier.getFonction("P"));
+                case (KeyEvent.VK_Q) -> fonctionRaccourci(raccourciClavier.getFonction("Q"));
+                case (KeyEvent.VK_S) -> fonctionRaccourci(raccourciClavier.getFonction("S"));
+                case (KeyEvent.VK_D) -> fonctionRaccourci(raccourciClavier.getFonction("D"));
+                case (KeyEvent.VK_F) -> fonctionRaccourci(raccourciClavier.getFonction("F"));
+                case (KeyEvent.VK_G) -> fonctionRaccourci(raccourciClavier.getFonction("G"));
+                case (KeyEvent.VK_H) -> fonctionRaccourci(raccourciClavier.getFonction("H"));
+                case (KeyEvent.VK_J) -> fonctionRaccourci(raccourciClavier.getFonction("J"));
+                case (KeyEvent.VK_K) -> fonctionRaccourci(raccourciClavier.getFonction("K"));
+                case (KeyEvent.VK_L) -> fonctionRaccourci(raccourciClavier.getFonction("L"));
+                case (KeyEvent.VK_M) -> fonctionRaccourci(raccourciClavier.getFonction("M"));
+                case (KeyEvent.VK_W) -> fonctionRaccourci(raccourciClavier.getFonction("W"));
+                case (KeyEvent.VK_X) -> fonctionRaccourci(raccourciClavier.getFonction("X"));
+                case (KeyEvent.VK_C) -> fonctionRaccourci(raccourciClavier.getFonction("C"));
+                case (KeyEvent.VK_V) -> fonctionRaccourci(raccourciClavier.getFonction("V"));
+                case (KeyEvent.VK_B) -> fonctionRaccourci(raccourciClavier.getFonction("B"));
+                case (KeyEvent.VK_N) -> fonctionRaccourci(raccourciClavier.getFonction("N"));
+                case (KeyEvent.VK_0) -> fonctionRaccourci(raccourciClavier.getFonction("N0"));
+                case (KeyEvent.VK_1) -> fonctionRaccourci(raccourciClavier.getFonction("N1"));
+                case (KeyEvent.VK_2) -> fonctionRaccourci(raccourciClavier.getFonction("N2"));
+                case (KeyEvent.VK_3) -> fonctionRaccourci(raccourciClavier.getFonction("N3"));
+                case (KeyEvent.VK_4) -> fonctionRaccourci(raccourciClavier.getFonction("N4"));
+                case (KeyEvent.VK_5) -> fonctionRaccourci(raccourciClavier.getFonction("N5"));
+                case (KeyEvent.VK_6) -> fonctionRaccourci(raccourciClavier.getFonction("N6"));
+                case (KeyEvent.VK_7) -> fonctionRaccourci(raccourciClavier.getFonction("N7"));
+                case (KeyEvent.VK_8) -> fonctionRaccourci(raccourciClavier.getFonction("N8"));
+                case (KeyEvent.VK_9) -> fonctionRaccourci(raccourciClavier.getFonction("N9"));
+                case (KeyEvent.VK_UP) -> fonctionRaccourci(raccourciClavier.getFonction("UP"));
+                case (KeyEvent.VK_DOWN) -> fonctionRaccourci(raccourciClavier.getFonction("DOWN"));
+                case (KeyEvent.VK_RIGHT) -> fonctionRaccourci(raccourciClavier.getFonction("RIGHT"));
+                case (KeyEvent.VK_LEFT) -> fonctionRaccourci(raccourciClavier.getFonction("LEFT"));
+                case (KeyEvent.VK_ENTER) -> fonctionRaccourci(raccourciClavier.getFonction("ENTREE"));
+                case (KeyEvent.VK_ESCAPE) -> fonctionRaccourci(raccourciClavier.getFonction("ECHAP"));
+                // touche non associée
+                default -> {
+                }
             }
         }
     }
+
+    /**
+     * Méthode qui permet de lancer une fonction attribué
+     * à une touche définie dans la classe RaccourciClavier
+     * @param fonctionALancer label exact parmi ceux définis de la fonction à lancer
+     */
+    public void fonctionRaccourci(String fonctionALancer) {
+        switch (fonctionALancer) {
+            // 0 Passe en mode unifié (ou différencié si deja unifié) s'il y a 2 fenêtre
+            case "changementModeAffich":
+                if (fenetreApp.size() == 2) {
+                    unified = !unified;
+                }
+                break;
+            // 1 Passe à la page suivante de la fenêtre 2
+            case "pageSuivFenetre2":
+                fenetreApp.get(1).getContainer().pageSuivante();
+                break;
+            // 2 Passe à la page précédente de la fenêtre 2
+            case "pagePrecFenetre2":
+                fenetreApp.get(1).getContainer().pagePrecedente();
+                break;
+            // 3 Monte dans le document de la fenêtre 2
+            case "monteDocFenetre2":
+                fenetreApp.get(1).getContainer().monter();
+                break;
+            // 4 descend dans le document de la fenêtre 2
+            case "descendDocFenetre2":
+                fenetreApp.get(1).getContainer().descendre();
+                break;
+            // 5 passe à la page suivante
+            case "pageSuivante":
+                pageSuivante();
+                break;
+            // 6 passe à la page précédente
+            case "pagePrecedente":
+                pagePrecedente();
+                break;
+            // 7 scroll vers le bas
+            case "descendre":
+                descendre();
+                break;
+            // 8 scroll vers le haut
+            case "monter":
+                monter();
+                break;
+            /*
+             * 9 sélectionne le champ de choix de page de la fenêtre 1
+             * présélectionne le texte qui y est
+             */
+            case "choixFenetrePremiere":
+                choixPage(0);
+                break;
+            /*
+             * 10 sélectionne le champ de choix de page de la fenêtre 2
+             * présélectionne le texte qui y est
+             */
+            case "choixFenetreDeuxieme" :
+                choixPage(1);
+                break;
+            // 11 zoom ou dézoome la fenêtre 1
+            case "inverseZoomFenetrePremiere" :
+                zoom();
+                break;
+            // 12 zoom ou dézoome la fenêtre 2
+            case "inverseZoomFenetreDeuxieme" :
+                fenetreApp.get(1).getContainer().zoom();
+                break;
+            // fonction indéfinie
+            default:
+                break;
+        }
+    }
+
     /**
      * Si le champ de numéro de page est selectionné alors
      * si l'utilisateur presse "Echap" alors on transmet le focus à la fenetre
@@ -235,14 +290,14 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
     public void gestionChoixPage(int code, FenetreApp fenetre) {
         switch (code) {
             /*
-             * Si l'utilisateur à pressé "Echap" alors on retourne le focus
+             * Si l'utilisateur a pressé "Echap" alors on retourne le focus
              * sur la fenêtre
              */
             case (KeyEvent.VK_ESCAPE):
                 fenetre.mainWindow.requestFocus();
                 break;
             /*
-             * Si l'utilisateur à pressé "Entrée" alors on va à la page indiquée dans le champ
+             * Si l'utilisateur a pressé "Entrée" alors on va à la page indiquée dans le champ
              * de choix de page sous réserve que c'est un entier compris entre 1 et le nombre maximum de page
              */
             case (KeyEvent.VK_ENTER):
