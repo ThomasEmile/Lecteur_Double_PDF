@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------------------------------------
  *                                                                                        *
  *  IUT de RODEZ département informatique - Projet tutoré PDF double affichage            *
- *  Groupe : Eva SIMON, Thomas EMILE, Steavn LAVILLE, Yann MOTTOLA, Pierre LESTRINGUEZ    *
+ *  Groupe : Eva SIMON, Thomas EMILE, Steven LAVILLE, Yann MOTTOLA, Pierre LESTRINGUEZ    *
  *                                                                                        *
  * ----------------------------------------------------------------------------------------
  */
@@ -24,9 +24,9 @@ public class FenetreApp {
     /** chaine de caractère contenant le chemin de l'icon de l'application */
     private final String CHEMIN_ICONE_APP = "icon/IconApp.png";
 
-    /** Champ de la fenetre JFrame */
+    /** Champ de la fenêtre JFrame */
     public JFrame mainWindow;
-    /** Champ du fond de la fenetre mainWindow */
+    /** Champ du fond de la fenêtre mainWindow */
     private JPanel background;
 
     /** Champ menu */
@@ -37,7 +37,7 @@ public class FenetreApp {
     public ClavierSouris clavierSouris;
 
     /**
-     * Construit une fenetre ainsi qu'un panel qui va contenir tout les autres composants de l'application
+     * Construit une fenêtre ainsi qu'un panel qui va contenir tout les autres composants de l'application
      */
     public FenetreApp(PDDocument document, ClavierSouris clavierSouris) {
 

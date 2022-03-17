@@ -1,7 +1,8 @@
+
 /*-----------------------------------------------------------------------------------------
  *                                                                                        *
  *  IUT de RODEZ département informatique - Projet tutoré PDF double affichage            *
- *  Groupe : Eva SIMON, Thomas EMILE, Steavn LAVILLE, Yann MOTTOLA, Pierre LESTRINGUEZ    *
+ *  Groupe : Eva SIMON, Thomas EMILE, Steven LAVILLE, Yann MOTTOLA, Pierre LESTRINGUEZ    *
  *                                                                                        *
  * ----------------------------------------------------------------------------------------
  */
@@ -39,7 +40,7 @@ public class PanelImage extends JPanel  {
         this.width = width;
         this.height = height;
         // applique l'image img au panel avec les dimensions données en paramètres
-        this.image = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        this.image = img.getScaledInstance(width, height, Image.SCALE_DEFAULT);
 
     }
 
@@ -76,7 +77,7 @@ public class PanelImage extends JPanel  {
 
     /**
      * Applique la BufferedImage img1 au panel
-     * @param img1
+     * @param img1 image 1
      */
     public void setImage(BufferedImage img1) {
         image = img1;
@@ -93,6 +94,4 @@ public class PanelImage extends JPanel  {
         setMinimumSize(d);
         setPreferredSize(d);
     }
-
 }
-
