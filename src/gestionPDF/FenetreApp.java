@@ -70,6 +70,7 @@ public class FenetreApp {
                     clavierSouris.getFenetreApp().get(0).mainWindow.setSize(new Dimension(1920, 1080));
                     clavierSouris.getFenetreApp().get(0).mainWindow.setLocation(0, 0);
                 }
+                clavierSouris.setUnified(false);
                 clavierSouris.getFenetreApp().get(0).mainWindow.setTitle(clavierSouris.getFenetreApp().get(0).getWINDOW_NAME() + " - fenêtre 1");
                 GestionFenetre.nbFenetre--;
 
@@ -103,6 +104,10 @@ public class FenetreApp {
 
     }
 
+    /**
+     * récupère le titre de la fenêtre
+     * @return le titre de la fenêtre
+     */
     public String getWINDOW_NAME() {
         return WINDOW_NAME;
     }
@@ -111,7 +116,7 @@ public class FenetreApp {
      * Getter de button
      * @return button
      */
-    public Menu getButton() {
+    public Menu getMenu() {
         return button;
     }
 
@@ -161,7 +166,6 @@ public class FenetreApp {
      * Ajout du listener aux éléments de la fenêtre*/
     public void addListeners() {
         mainWindow.addMouseMotionListener(clavierSouris);
-        clavierSouris.setFenetreApp(this);
         clavierSouris.setButtonPanel(button);
         clavierSouris.setContainerPDF(container);
         this.background.addKeyListener(clavierSouris);

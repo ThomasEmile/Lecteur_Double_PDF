@@ -5,7 +5,9 @@
  *                                                                                        *
  * ----------------------------------------------------------------------------------------
  */
+
 package gestionPDF;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import javax.swing.*;
@@ -30,13 +32,16 @@ public class Menu {
     public JTextField choixPage;
     public JLabel nombreDePage;
     private FenetreApp fenetre;
+    private int hauteurMenu;
 
     // création de la MenuBar afin d'implémenter les fonctionnalités : ouvrir, fermer et réduire un document pdf
     private JMenuBar menuBarMainWindow;
     private JMenu menuMainWindow;
+
     private JMenu ouvrir;
     private JMenuItem ouvertureMemeFenetre;
     private JMenuItem ouvertureNouvelleFenetre;
+
     private JMenuItem quitter;
 
     private JMenu menuMode;
@@ -53,8 +58,11 @@ public class Menu {
 
     // déclaration de deux objets Counter
     public Counter c = new Counter();
-    
-    
+
+    /**
+     * Initilise le menu de la fenetre
+     * @param fenetre
+     */
     public Menu(FenetreApp fenetre) {
         c.setValue(1);
         this.fenetre = fenetre;
@@ -63,7 +71,8 @@ public class Menu {
         configMenu();
         setIcon();
         containerButton = new JPanel();
-        Dimension dimension = new Dimension(1920, 60);
+        hauteurMenu = 60;
+        Dimension dimension = new Dimension(1920, hauteurMenu);
         containerButton.setMaximumSize(dimension);
         containerButton.setMinimumSize(dimension);
         pageSuivante = new JButton("↓");
@@ -76,6 +85,9 @@ public class Menu {
         addListeners(fenetre.clavierSouris);
     }
 
+    /**
+     * Initialise les icon a une taille définie
+     */
     void setIcon(){
 
         int largeur = 15;
@@ -97,14 +109,22 @@ public class Menu {
 
 
     }
+
+    public int getHauteurMenu() {
+        return hauteurMenu;
+    }
+
+    /**
+     * Configure le menu : lien bouton, texte bouton
+     */
     void configMenu(){
 
-
-
         menuMainWindow = new JMenu("Fichier");
+
         ouvrir = new JMenu("Ouvrir");
         ouvertureMemeFenetre = new JMenuItem("Sur cette fenetre");
         ouvertureNouvelleFenetre = new JMenuItem("Nouvelle fenetre");
+
         quitter = new JMenuItem("Quitter l'application");
         menuMode = new JMenu("Mode");
         modeUnifier = new JMenuItem("Mode Unifié");
@@ -121,9 +141,11 @@ public class Menu {
         menuMode.setFont(new Font("SansSerif", Font.PLAIN, 16));
         menuAide.setFont(new Font("SansSerif", Font.PLAIN, 16));
 
+
         ouvrir .setFont(new Font("SansSerif", Font.PLAIN, 12));
         ouvertureMemeFenetre.setFont(new Font("SansSerif", Font.PLAIN, 12));
         ouvertureNouvelleFenetre.setFont(new Font("SansSerif", Font.PLAIN, 12));
+
         quitter.setFont(new Font("SansSerif", Font.PLAIN, 12));
         modeUnifier.setFont(new Font("SansSerif", Font.PLAIN, 12));
         modeDifferencier.setFont(new Font("SansSerif", Font.PLAIN, 12));
@@ -134,17 +156,35 @@ public class Menu {
 
 
 
+        // événement remplacer le pdf
+        ouvertureMemeFenetre.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = 0;
+                if (fenetre.clavierSouris.getFenetreApp().size() == 2 && fenetre.clavierSouris.getFenetreApp().get(1).equals(fenetre)) {
+                    index = 1;
+                }
+                GestionFenetre.remplacer(index);
+
+            }
+        });
+
+
         // évènement mode Unifié
         modeUnifier.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                fenetre.clavierSouris.setUnified(true);
+                if (fenetre.clavierSouris.isUnified() == false) {
+                    fenetre.clavierSouris.setUnified(true);
+                }
             }
         });
 
         // évènement mode Différencié
         modeDifferencier.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                fenetre.clavierSouris.setUnified(false);
+                if (fenetre.clavierSouris.isUnified() == true) {
+                    fenetre.clavierSouris.setUnified(false);
+                }
             }
         });
 
@@ -154,6 +194,9 @@ public class Menu {
                 affichageClassique.setIcon( iconBlank );
                 pleineLargeur.setIcon(iconBlank);
                 pleinePage.setIcon(iconZoom);
+
+                // mettre la méthode de pleine page
+
                 fenetre.clavierSouris.zoomPleinePage();
             }
         });
@@ -161,10 +204,14 @@ public class Menu {
         // évènement pleine Largeur
         pleineLargeur.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
+
                 affichageClassique.setIcon( iconBlank );
                 pleineLargeur.setIcon(iconZoom);
                 pleinePage.setIcon(iconBlank);
-                fenetre.clavierSouris.zoom();
+
+
+                // la méthode de pleine largeur pour le moment cela zoom ou dezoom
+                fenetre.clavierSouris.zoomPleineLargeur();
             }
         });
 
@@ -174,15 +221,7 @@ public class Menu {
                 affichageClassique.setIcon( iconZoom );
                 pleineLargeur.setIcon(iconBlank);
                 pleinePage.setIcon(iconBlank);
-                fenetre.getContainer().zoom();
-            }
-        });
-
-        // évènement qui ouvre un nouveau document pdf
-        ouvertureMemeFenetre.addActionListener(new ActionListener() {
-            // TODO mettre l'option permettant d'ouvrir sur la meme fenetre pour le moment cela créer une nouvelle fenetre
-            public void actionPerformed(ActionEvent e) {
-                GestionFenetre.nouvelleFenetre();
+                fenetre.getContainer().zoomClassique();
             }
         });
 
@@ -190,6 +229,7 @@ public class Menu {
         ouvertureNouvelleFenetre.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 GestionFenetre.nouvelleFenetre();
+
             }
         });
 
@@ -203,17 +243,27 @@ public class Menu {
 
     }
 
+    /**
+     * mets l'icon sur le mode Unifier
+     */
     void setModeUnifier(){
         modeUnifier.setIcon( iconMode );
         modeDifferencier.setIcon(iconBlank);
 
     }
 
+    /**
+     * mets l'icon sur le mode Differencier
+     */
     void setModeDifferencier(){
         modeUnifier.setIcon( iconBlank );
         modeDifferencier.setIcon(iconMode);
 
     }
+
+    /**
+     * Configure les boutons : taille texte fonction de boutons
+     */
     void configButton() {
 
         pageSuivante.setPreferredSize(new Dimension(50,50));
@@ -248,12 +298,14 @@ public class Menu {
 
     }
 
+    /**
+     * Ajoute les composants a leurs place sur la fenetre
+     */
     void ajoutComposants() {
         fenetre.getMainWindow().setJMenuBar(menuBarMainWindow);
         menuMainWindow.add(ouvrir);
         ouvrir.add(ouvertureMemeFenetre);
         ouvrir.add(ouvertureNouvelleFenetre);
-        //menuMainWindow.add(fermerFenetre);
         menuMainWindow.add(quitter);
         menuBarMainWindow.add(menuMainWindow);
         menuMode.add(modeUnifier);

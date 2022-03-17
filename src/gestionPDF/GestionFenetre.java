@@ -1,5 +1,4 @@
 package gestionPDF;
-
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import javax.swing.*;
@@ -7,7 +6,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
+/**
+ * Classe de gestion des fenêtres
+ */
 public class GestionFenetre {
 
     /** Nombre de fenêtres actives */
@@ -43,8 +44,10 @@ public class GestionFenetre {
                     nbFenetre++;
                     if (nbFenetre == 1) {
                         fenetre.mainWindow.setTitle(fenetre.getWINDOW_NAME() + " - fenêtre 1");
+                        clavierSouris.setFenetreApp(fenetre, 0);
                     } else if (nbFenetre == 2) {
                         fenetre.mainWindow.setTitle(fenetre.getWINDOW_NAME() + " - fenêtre 2");
+                        clavierSouris.setFenetreApp(fenetre, 1);
                     }
                     fenetre.mainWindow.setVisible(true);
                     fenetre.mainWindow.requestFocus();
@@ -77,5 +80,28 @@ public class GestionFenetre {
             JOptionPane.showMessageDialog(null, "Erreur lors de l'ouverture du document.");
             nouvelleFenetre();
         }
+    }
+
+    /**
+     * Méthode qui gère le remplacement d'un pdf
+     * @param index
+     */
+    public static void remplacer(int index ) {
+        // Choix du document à afficher
+        String path = FileChooser.Chooser();
+        try {
+            if (path != null) {
+                PDDocument document = PDDocument.load(new File(path));
+                // création de la fenêtre
+                FenetreApp fenetre = new FenetreApp(document, clavierSouris);
+                fenetre.mainWindow.setTitle(fenetre.getWINDOW_NAME() + " - fenêtre " + (index + 1));
+                fenetres.set(index, fenetre);
+                clavierSouris.remplacerFenetre(fenetre, index);
+            }
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Erreur lors de l'ouverture du document.");
+            remplacer(index);
+        }
+
     }
 }

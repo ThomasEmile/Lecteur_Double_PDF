@@ -5,6 +5,7 @@
  *                                                                                        *
  * ----------------------------------------------------------------------------------------
  */
+
 package gestionPDF;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -15,7 +16,6 @@ import java.io.IOException;
 /**
  * Classe d'entrée de l'application, contenant le main() de celle-ci
  */
-
 public class Main {
 
     /**

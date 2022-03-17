@@ -7,6 +7,7 @@
  */
 
 package gestionPDF;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -40,7 +41,7 @@ public class PanelImage extends JPanel  {
         this.width = width;
         this.height = height;
         // applique l'image img au panel avec les dimensions données en paramètres
-        this.image = img.getScaledInstance(width, height, Image.SCALE_DEFAULT);
+        this.image = img.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 
     }
 
@@ -86,7 +87,7 @@ public class PanelImage extends JPanel  {
     /**
      * Redimensionne l'image en fonction du ratio
      * @param ratio le ration a appliqué sur l'image
-     * @param image l'image sur laquelle appliquer le ratio
+     * @param dimension les dimensions à appliquer
      */
     public void dimension(double ratio, Dimension dimension) {
         Dimension d = new Dimension((int)(dimension.width * ratio) , (int)(dimension.height * ratio));

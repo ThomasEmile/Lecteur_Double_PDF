@@ -25,7 +25,7 @@ public class FileChooser {
 		JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 		chooser.setDialogTitle("Selectionner un pdf");
 
-		chooser.setAcceptAllFileFilterUsed(false);
+		chooser.setAcceptAllFileFilterUsed(true);
 
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF file", "pdf");
 		chooser.addChoosableFileFilter(filter);
