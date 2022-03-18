@@ -21,14 +21,14 @@ public class FileChooser {
 	}
 
 	public static String Chooser() {
-
+		UIManager.put("FileChooser.cancelButtonText","Annuler");
 		JFileChooser chooser = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 		chooser.setDialogTitle("Selectionner un pdf");
-
 		chooser.setAcceptAllFileFilterUsed(true);
 
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF file", "pdf");
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("PDF document (*.pdf)", "pdf");
 		chooser.addChoosableFileFilter(filter);
+		chooser.setApproveButtonText("Ouvrir");
 
 		int returnValue = chooser.showOpenDialog(null);
 		if (returnValue == JFileChooser.APPROVE_OPTION) {
