@@ -184,4 +184,6 @@ public class FenetreApp {
         background.setLayout(new BoxLayout(background, BoxLayout.Y_AXIS));
 
     }
+
+
 }

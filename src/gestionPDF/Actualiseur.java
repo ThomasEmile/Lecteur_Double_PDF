@@ -41,6 +41,9 @@ public class Actualiseur extends Thread {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
+            /* Update l'affichage pour eviter les problèmes d'affichage*/
+            updateUI();
             /* Redimensionne le pdf si besoin
              * (fenetreApp.container.redimensionner positionné à true)
              */
@@ -57,6 +60,19 @@ public class Actualiseur extends Thread {
             /* transfère le focus à la fenêtre sur laquelle est le curseur */
             transfereFocus();
 
+        }
+    }
+
+
+    /**
+     * Actualise l'affichage des ou de la fenêtre afin d'éviter les bugs d'affichage
+     */
+    private void updateUI() {
+        if (fenetreApp != null && fenetreApp.clavierSouris.getFenetreApp().size() == 2) {
+            fenetreApp.clavierSouris.getFenetreApp().get(0).getContainer().documentPDF.updateUI();
+            fenetreApp.clavierSouris.getFenetreApp().get(1).getContainer().documentPDF.updateUI();
+        } else if (fenetreApp != null) {
+            fenetreApp.clavierSouris.getFenetreApp().get(0).getContainer().documentPDF.updateUI();
         }
     }
 

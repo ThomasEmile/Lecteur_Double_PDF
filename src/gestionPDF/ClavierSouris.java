@@ -134,7 +134,7 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
                 case (KeyEvent.VK_U) :
                     // On passe en mode unifié (ou différencié si deja unifié) si il y a 2 fenêtre
                     if (fenetreApp.size() == 2) {
-                        unified = !unified;
+                        setUnified(!unified);
                     }
                     break;
                 // Si c'est la touche D..
@@ -195,14 +195,13 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
                     break;
                 // Si c'est la touche "1"..
                 case (KeyEvent.VK_1) :
-                    // ..On zoom en pleine largeur ou dézoom la fenetre 1
-                    zoomPleineLargeur();
+                    // ..On zoom en 100% ou dézoom la fenetre 1
+                    zoomClassique();
                     break;
                 // Si c'est la touche 2
                 case (KeyEvent.VK_2) :
-                    // ..On zoom en pleine largeur ou dézoom la fenetre 2
-                    if (fenetreApp.size() == 2 && !unified)
-                    fenetreApp.get(1).getContainer().zoom();
+                    // ..On zoom en pleine largeur ou dézoom la fenetre 1
+                    zoomPleineLargeur();
                     break;
                 // Si c'est la touche "3"..
                 case (KeyEvent.VK_3) :
@@ -211,6 +210,18 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
                     break;
                 // Si c'est la touche "4"..
                 case (KeyEvent.VK_4) :
+                    // ..On zoom en 100% ou dézoom la fenetre 2
+                    if (fenetreApp.size() == 2 && !unified)
+                        fenetreApp.get(1).getContainer().zoomClassique();
+                    break;
+                // Si c'est la touche "4"..
+                case (KeyEvent.VK_5) :
+                    // ..On zoom en pleine largeur ou dézoom la fenetre 2
+                    if (fenetreApp.size() == 2 && !unified)
+                        fenetreApp.get(1).getContainer().zoomPleineLargeur();
+                    break;
+                // Si c'est la touche "4"..
+                case (KeyEvent.VK_6) :
                     // ..On zoom en pleine page ou dézoom la fenetre 2
                     if (fenetreApp.size() == 2 && !unified)
                         fenetreApp.get(1).getContainer().zoomPleinePage();
@@ -324,10 +335,10 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
      */
     public void zoomPleineLargeur() {
         if (unified) {
-            fenetreApp.get(0).getContainer().zoom();
-            fenetreApp.get(1).getContainer().zoom();
+            fenetreApp.get(0).getContainer().zoomPleineLargeur();
+            fenetreApp.get(1).getContainer().zoomPleineLargeur();
         } else {
-            fenetreApp.get(0).getContainer().zoom();
+            fenetreApp.get(0).getContainer().zoomPleineLargeur();
         }
     }
 
@@ -639,9 +650,29 @@ public class ClavierSouris implements KeyListener, MouseWheelListener, MouseMoti
 
     /**
      * setter de unified
+     * modifie le zoom de la fenetre 2 en fonction de la fenetre 1
      * @param b la nouvelle valeur de unified
      */
     public void setUnified(boolean b) {
+
         unified = b;
+        if (fenetreApp.size() == 2  && unified) {
+            fenetreApp.get(0).getMenu().setModeUnifierIcon();
+            fenetreApp.get(1).getMenu().setModeUnifierIcon();
+        } else if (fenetreApp.size() == 2) {
+            fenetreApp.get(0).getMenu().setModeDifferencierIcon();
+            fenetreApp.get(1).getMenu().setModeDifferencierIcon();
+        } else {
+            fenetreApp.get(0).getMenu().setModeDifferencierIcon();
+        }
+        if (fenetreApp.size() == 2  && unified) {
+            if (fenetreApp.get(0).getContainer().isZoomPleinePage()) {
+                fenetreApp.get(1).getContainer().zoomPleinePage();
+            } else if (fenetreApp.get(0).getContainer().isZoomPleineLargeur()) {
+                fenetreApp.get(1).getContainer().zoomPleineLargeur();
+            } else {
+                fenetreApp.get(1).getContainer().zoomClassique();
+            }
+        }
     }
 }

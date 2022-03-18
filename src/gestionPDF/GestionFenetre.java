@@ -67,6 +67,7 @@ public class GestionFenetre {
 
                     clavierSouris.remplacerFenetre(fenetre, choixFais);
 
+
                     // Création du thread actualiseur
                     Actualiseur actualiseur = new Actualiseur(fenetre);
                     // Lancement du thread actualisuer

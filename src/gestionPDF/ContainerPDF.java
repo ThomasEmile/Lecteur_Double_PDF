@@ -29,10 +29,10 @@ public class ContainerPDF {
     public boolean classique = true;
 
     /** True si le pdf est zoomé, false sinon */
-    public boolean zoomed = false;
+    public boolean zoomPleineLargeur = false;
 
     /** True si le pdf est zoomé pleine page, false sinon */
-    private boolean pleinePage = false;
+    private boolean zoomPleinePage = false;
 
     /** True si le pdf doit être redimensionner, false sinon */
     public boolean redimensionner = true;
@@ -209,10 +209,10 @@ public class ContainerPDF {
                  * pages blanches
                  */
                 if (i <= fenetre.getMenu().c.getValue() + 5 && i >= fenetre.getMenu().c.getValue() - 5) {
-                    BufferedImage img1 = pdfRenderer.renderImageWithDPI(i, 100);
-                    dimensionDeBase.set(i, new Dimension(img1.getWidth(), img1.getHeight()));
+                    BufferedImage img1 = pdfRenderer.renderImageWithDPI(i, 200);
+                    dimensionDeBase.set(i, new Dimension(img1.getWidth()/2, img1.getHeight()/2));
                     /* Création du panel contenant l'image i */
-                    PanelImage panelImage = new PanelImage(img1, img1.getWidth(), img1.getHeight());
+                    PanelImage panelImage = new PanelImage(img1, img1.getWidth()/2, img1.getHeight()/2);
                     /* Ajout du panel contenant l'image de la page i au total des pages */
                     pages.add(i, panelImage);
                     /* Ajout du panel contenant l'image de la page i au JPanel représentant le document pdf en entier */
@@ -274,7 +274,7 @@ public class ContainerPDF {
                             pages.get(i).paint(pages.get(i).getGraphics());
                         } else {
                             /* ..Sinon on charge l'image et on l'affiche au bonne dimension */
-                            pages.get(i).setImage(pdfRenderer.renderImageWithDPI(i, 100));
+                            pages.get(i).setImage(pdfRenderer.renderImageWithDPI(i, 200));
                             pages.get(i).setTaille((int)(dimensionDeBase.get(i).width * ratio), (int)(dimensionDeBase.get(i).height * ratio));
                             pages.get(i).paint(pages.get(i).getGraphics());
                         }
@@ -303,9 +303,9 @@ public class ContainerPDF {
      * @param i page sur laquelle on définit le ratio
      */
     private void defRatio(int i) {
-        if (zoomed) {
+        if (zoomPleineLargeur) {
             ratio = (double) (fenetre.mainWindow.getWidth()) / (double) dimensionDeBase.get(i).width;
-        } else if (pleinePage) {
+        } else if (zoomPleinePage) {
             ratio = (double) (fenetre.mainWindow.getHeight() - fenetre.getMenu().getHauteurMenu() * 2 - 40) / (double) dimensionDeBase.get(i).height;
         } else if (classique){
             ratio = 1;
@@ -346,7 +346,6 @@ public class ContainerPDF {
 
         int pageActuelle = ((scrollPaneContainer.getVerticalScrollBar().getValue() - espaces.get(0).getHeight())
                 / (pages.get(0).height + espaces.get(0).getHeight()) + 1);
-        System.out.println(pageActuelle);
         if (pageActuelle <= nombrePage) {
             fenetre.getMenu().choixPage.setText("" + pageActuelle);
             fenetre.getMenu().c.setValue(pageActuelle);
@@ -375,9 +374,10 @@ public class ContainerPDF {
      * Change le statut "zoomé" du pdf et change le boolean updateScrollBar pour que le thread
      * qui actualise puisse retourner sur la même page.
      */
-    public void zoom() {
-        pleinePage = false;
-        zoomed = !zoomed;
+    public void zoomPleineLargeur() {
+        zoomPleinePage = false;
+        zoomPleineLargeur = !zoomPleineLargeur;
+        fenetre.getMenu().setZoomPleineLargeurIcon();
         setPageActuelle(-10);
         updatePDF();
         updateScrollBar = true;
@@ -389,8 +389,9 @@ public class ContainerPDF {
      * qui actualise puisse retourner sur la même page.
      */
     public void zoomPleinePage() {
-        zoomed = false;
-        pleinePage = !pleinePage;
+        zoomPleineLargeur = false;
+        zoomPleinePage = !zoomPleinePage;
+        fenetre.getMenu().setZoomPleinePageIcon();
         setPageActuelle(-10);
         updatePDF();
         updateScrollBar = true;
@@ -402,9 +403,10 @@ public class ContainerPDF {
      * qui actualise puisse retourner sur la même page.
      */
     public void zoomClassique() {
-        pleinePage = false;
-        zoomed = false;
+        zoomPleinePage = false;
+        zoomPleineLargeur = false;
         classique = true;
+        fenetre.getMenu().setZoomClassiqueIcon();
         setPageActuelle(-10);
         updatePDF();
         updateScrollBar = true;
@@ -455,6 +457,22 @@ public class ContainerPDF {
                 scrollPaneContainer.getVerticalScrollBar().getValue() - 100);
         updatePDF();
         updatePageCourante();
+    }
+
+    /**
+     * Getter de zoom pleine page
+     * @return zoomPleinePage
+     */
+    public boolean isZoomPleinePage() {
+        return zoomPleinePage;
+    }
+
+    /**
+     * Getter de zoom pleine largeur
+     * @return zoomPleineLargeur
+     */
+    public boolean isZoomPleineLargeur() {
+        return zoomPleineLargeur;
     }
 }
 

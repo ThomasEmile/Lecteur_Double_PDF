@@ -24,6 +24,8 @@ public class Menu {
     ImageIcon iconBlank = new ImageIcon();
 
 
+    private static final String PATH_AIDE = "aide.pdf";
+
     private JPanel containerButton;
     public ContainerPDF containerPDF;
     private JButton pageSuivante;
@@ -104,7 +106,7 @@ public class Menu {
         iconMode.setImage(imgMode);
 
         affichageClassique.setIcon( iconZoom );
-        setModeDifferencier();
+        setModeDifferencierIcon();
 
 
     }
@@ -172,7 +174,8 @@ public class Menu {
         // évènement mode Unifié
         modeUnifier.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (fenetre.clavierSouris.isUnified() == false) {
+                if (!fenetre.clavierSouris.isUnified() && fenetre.clavierSouris.getFenetreApp().size() == 2) {
+                    setModeUnifierIcon();
                     fenetre.clavierSouris.setUnified(true);
                 }
             }
@@ -181,7 +184,8 @@ public class Menu {
         // évènement mode Différencié
         modeDifferencier.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (fenetre.clavierSouris.isUnified() == true) {
+                if (fenetre.clavierSouris.isUnified()) {
+                    setModeDifferencierIcon();
                     fenetre.clavierSouris.setUnified(false);
                 }
             }
@@ -195,8 +199,11 @@ public class Menu {
                 pleinePage.setIcon(iconZoom);
 
                 // mettre la méthode de pleine page
-
-                fenetre.clavierSouris.zoomPleinePage();
+                if (fenetre.clavierSouris.isUnified() && fenetre.clavierSouris.getFenetreApp().size() == 2) {
+                    fenetre.clavierSouris.zoomPleinePage();
+                } else {
+                    fenetre.getContainer().zoomPleinePage();
+                }
             }
         });
 
@@ -210,7 +217,11 @@ public class Menu {
 
 
                 // la méthode de pleine largeur pour le moment cela zoom ou dezoom
-                fenetre.clavierSouris.zoomPleineLargeur();
+                if (fenetre.clavierSouris.isUnified() && fenetre.clavierSouris.getFenetreApp().size() == 2) {
+                    fenetre.clavierSouris.zoomPleineLargeur();
+                } else {
+                    fenetre.getContainer().zoomPleineLargeur();
+                }
             }
         });
 
@@ -220,7 +231,11 @@ public class Menu {
                 affichageClassique.setIcon( iconZoom );
                 pleineLargeur.setIcon(iconBlank);
                 pleinePage.setIcon(iconBlank);
-                fenetre.getContainer().zoomClassique();
+                if (fenetre.clavierSouris.isUnified() && fenetre.clavierSouris.getFenetreApp().size() == 2) {
+                    fenetre.clavierSouris.zoomClassique();
+                } else {
+                    fenetre.getContainer().zoomClassique();
+                }
             }
         });
 
@@ -240,12 +255,32 @@ public class Menu {
             }
         });
 
+        aideRaccourci.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    PDDocument document = PDDocument.load(new File(PATH_AIDE));
+                    ClavierSouris clavierSouris = new ClavierSouris();
+                    FenetreApp fenetreAide = new FenetreApp(document, clavierSouris);
+                    fenetreAide.mainWindow.removeWindowListener(fenetreAide.mainWindow.getWindowListeners()[0]);
+                    clavierSouris.setFenetreApp(fenetreAide, 0);
+
+                    fenetreAide.mainWindow.setVisible(true);
+                    fenetreAide.mainWindow.setSize(new Dimension(850, 1000));
+                    fenetreAide.mainWindow.requestFocus();
+                    fenetreAide.mainWindow.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
     }
 
     /**
      * mets l'icon sur le mode Unifier
      */
-    void setModeUnifier(){
+    void setModeUnifierIcon(){
         modeUnifier.setIcon( iconMode );
         modeDifferencier.setIcon(iconBlank);
 
@@ -254,7 +289,7 @@ public class Menu {
     /**
      * mets l'icon sur le mode Differencier
      */
-    void setModeDifferencier(){
+    void setModeDifferencierIcon(){
         modeUnifier.setIcon( iconBlank );
         modeDifferencier.setIcon(iconMode);
 
@@ -334,6 +369,24 @@ public class Menu {
         this.choixPage.addKeyListener(clavier);
         this.pagePrecedente.addKeyListener(clavier);
         this.pageSuivante.addKeyListener(clavier);
+    }
+
+    public void setZoomPleinePageIcon() {
+        affichageClassique.setIcon( iconBlank );
+        pleineLargeur.setIcon(iconBlank);
+        pleinePage.setIcon(iconZoom);
+    }
+
+    public void setZoomPleineLargeurIcon() {
+        affichageClassique.setIcon( iconBlank );
+        pleineLargeur.setIcon(iconZoom);
+        pleinePage.setIcon(iconBlank);
+    }
+
+    public void setZoomClassiqueIcon() {
+        affichageClassique.setIcon( iconZoom );
+        pleineLargeur.setIcon(iconBlank);
+        pleinePage.setIcon(iconBlank);
     }
 
 
