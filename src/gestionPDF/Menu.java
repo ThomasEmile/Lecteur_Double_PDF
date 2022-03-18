@@ -265,6 +265,8 @@ public class Menu {
                     fenetreAide.mainWindow.removeWindowListener(fenetreAide.mainWindow.getWindowListeners()[0]);
                     clavierSouris.setFenetreApp(fenetreAide, 0);
 
+                    fenetreAide.getMainWindow().setJMenuBar(new JMenuBar());
+                    fenetreAide.getMenu().containerButton.removeAll();
                     fenetreAide.mainWindow.setVisible(true);
                     fenetreAide.mainWindow.setSize(new Dimension(850, 1000));
                     fenetreAide.mainWindow.requestFocus();
